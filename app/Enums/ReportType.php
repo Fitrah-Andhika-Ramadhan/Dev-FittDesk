@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Enums;
+
+enum ReportType: string {
+    case DAILY_PROGRESS = 'DAILY_PROGRESS';
+    case WEEKLY_SUMMARY = 'WEEKLY_SUMMARY';
+    case MONTHLY_FINANCIAL = 'MONTHLY_FINANCIAL';
+    case QUARTERLY_REVIEW = 'QUARTERLY_REVIEW';
+    case BUDGET_STATUS = 'BUDGET_STATUS';
+    case SAFETY_REPORT = 'SAFETY_REPORT';
+    case QUALITY_REPORT = 'QUALITY_REPORT';
+    case CUSTOM = 'CUSTOM';
+}
+

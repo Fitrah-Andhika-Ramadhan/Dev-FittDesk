@@ -503,14 +503,14 @@ export default function Landing() {
               <CardContent className="pt-6 text-center">
                 <Phone className="w-8 h-8 text-blue-600 mx-auto mb-4" />
                 <h3 className="font-semibold text-gray-900 mb-2">Phone</h3>
-                <p className="text-gray-600">+62 812 3456 7890</p>
+                <p className="text-gray-600">08128886013</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="pt-6 text-center">
                 <Mail className="w-8 h-8 text-blue-600 mx-auto mb-4" />
                 <h3 className="font-semibold text-gray-900 mb-2">Email</h3>
-                <p className="text-gray-600">info@fittdesk.com</p>
+                <p className="text-gray-600">fittdesk@gmail.com</p>
               </CardContent>
             </Card>
           </div>

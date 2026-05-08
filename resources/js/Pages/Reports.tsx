@@ -75,7 +75,7 @@ export default function ReportsPage() {
       if (nextType && nextType !== 'all') params.set('type', nextType);
       if (nextSearch.trim()) params.set('search', nextSearch.trim());
 
-      const response = await axios.get(`/api/reports${params.toString() ? `?${params.toString()}` : ''}`);
+      const response = await axios.get(`/app-api/reports${params.toString() ? `?${params.toString()}` : ''}`);
       const data = response.data;
 
       if (!data.success) {
@@ -128,7 +128,7 @@ export default function ReportsPage() {
         },
       };
 
-      const response = await axios.post('/api/reports', reportData);
+      const response = await axios.post('/app-api/reports', reportData);
       const data = response.data;
       
       if (!data.success) {
@@ -161,7 +161,7 @@ export default function ReportsPage() {
     if (!result.isConfirmed) return;
 
     try {
-      const response = await axios.delete(`/api/reports/${id}`);
+      const response = await axios.delete(`/app-api/reports/${id}`);
       const data = response.data;
       if (!data.success) {
         throw new Error(data.error || 'Failed to delete report');

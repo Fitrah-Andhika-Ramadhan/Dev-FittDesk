@@ -82,7 +82,7 @@ export default function DocumentsPage() {
       if (nextType && nextType !== 'all') params.set('type', nextType);
       if (nextSearch.trim()) params.set('search', nextSearch.trim());
 
-      const response = await axios.get(`/api/documents${params.toString() ? `?${params.toString()}` : ''}`);
+      const response = await axios.get(`/app-api/documents${params.toString() ? `?${params.toString()}` : ''}`);
       const data = response.data;
 
       if (!data.success) {
@@ -151,7 +151,7 @@ export default function DocumentsPage() {
         throw new Error('Please select a file or provide a manual URL.');
       }
 
-      const response = await axios.post('/api/documents', formData, {
+      const response = await axios.post('/app-api/documents', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
@@ -187,7 +187,7 @@ export default function DocumentsPage() {
     if (!result.isConfirmed) return;
 
     try {
-      const response = await axios.delete(`/api/documents/${id}`);
+      const response = await axios.delete(`/app-api/documents/${id}`);
       const data = response.data;
       if (!data.success) {
         throw new Error(data.error || 'Failed to delete document');

@@ -13,7 +13,7 @@ return new class extends Migration
             $table->uuid('project_id')->index();
             $table->uuid('phase_id')->nullable();
             $table->uuid('block_id')->nullable();
-            $table->string('user_id')->index(); // Changed from uuid because of auth users integration compatibility sometimes, but keeping consistent is better. Wait, we cast users.id to uuid earlier!
+            $table->uuid('user_id')->index(); // Changed from string to uuid to fix Postgres foreign key constraints
             
             $table->string('title');
             $table->text('description')->nullable();

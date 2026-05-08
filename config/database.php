@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    'default' => env('DB_CONNECTION', 'pgsql'),
 
     /*
     |--------------------------------------------------------------------------
@@ -55,7 +55,7 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                (defined('\Pdo\Mysql::ATTR_SSL_CA') ? \Pdo\Mysql::ATTR_SSL_CA : @PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
 
@@ -75,23 +75,46 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                (defined('\Pdo\Mysql::ATTR_SSL_CA') ? \Pdo\Mysql::ATTR_SSL_CA : @PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
 
         'pgsql' => [
             'driver' => 'pgsql',
-            'url' => env('DB_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '5432'),
-            'database' => env('DB_DATABASE', 'laravel'),
-            'username' => env('DB_USERNAME', 'root'),
-            'password' => env('DB_PASSWORD', ''),
+            'host' => (function() {
+                $url = env('POSTGRES_URL_NON_POOLING', env('POSTGRES_URL'));
+                return $url ? parse_url($url, PHP_URL_HOST) : env('DB_HOST', '127.0.0.1');
+            })(),
+            'port' => (function() {
+                $url = env('POSTGRES_URL_NON_POOLING', env('POSTGRES_URL'));
+                return $url ? parse_url($url, PHP_URL_PORT) : env('DB_PORT', '5432');
+            })(),
+            'database' => (function() {
+                $url = env('POSTGRES_URL_NON_POOLING', env('POSTGRES_URL'));
+                if ($url) {
+                    $db = ltrim(parse_url($url, PHP_URL_PATH), '/');
+                    $host = parse_url($url, PHP_URL_HOST);
+                    if (strpos($host, 'neon.tech') !== false) {
+                        $endpoint = explode('.', $host)[0];
+                        $db .= "';options='endpoint=" . $endpoint;
+                    }
+                    return $db;
+                }
+                return env('DB_DATABASE', 'forge');
+            })(),
+            'username' => (function() {
+                $url = env('POSTGRES_URL_NON_POOLING', env('POSTGRES_URL'));
+                return $url ? parse_url($url, PHP_URL_USER) : env('DB_USERNAME', 'forge');
+            })(),
+            'password' => (function() {
+                $url = env('POSTGRES_URL_NON_POOLING', env('POSTGRES_URL'));
+                return $url ? parse_url($url, PHP_URL_PASS) : env('DB_PASSWORD', '');
+            })(),
             'charset' => env('DB_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,
             'search_path' => 'public',
-            'sslmode' => 'prefer',
+            'sslmode' => 'require',
         ],
 
         'sqlsrv' => [

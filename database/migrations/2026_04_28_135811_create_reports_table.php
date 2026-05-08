@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('user_id')->index();
+            $table->uuid('user_id')->index();
             
             $table->string('title');
             $table->text('description')->nullable();

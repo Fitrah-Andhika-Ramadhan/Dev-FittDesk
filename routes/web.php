@@ -20,8 +20,8 @@ Route::get('/landing', function () {
 Route::get('/knowledge-base', [ArticleController::class, 'index'])->name('articles.index');
 Route::get('/knowledge-base/article/{slug}', [ArticleController::class, 'show'])->name('articles.show');
 
-Route::get('/api/landing/content', [\App\Http\Controllers\LandingContentController::class, 'index']);
-Route::get('/api/landing/media', [\App\Http\Controllers\LandingMediaController::class, 'index']);
+Route::get('/app-api/landing/content', [\App\Http\Controllers\LandingContentController::class, 'index']);
+Route::get('/app-api/landing/media', [\App\Http\Controllers\LandingMediaController::class, 'index']);
 
 Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
@@ -82,22 +82,24 @@ Route::middleware('auth')->group(function () {
         Route::get('/daily-reports/{dailyReport}/pdf', [DailyReportController::class, 'downloadPdf'])->name('daily_reports.pdf');
 
         // API Routes for Pages
-        Route::get('/api/documents', [\App\Http\Controllers\DocumentController::class, 'index']);
-        Route::post('/api/documents', [\App\Http\Controllers\DocumentController::class, 'store']);
-        Route::delete('/api/documents/{id}', [\App\Http\Controllers\DocumentController::class, 'destroy']);
-        Route::get('/api/reports', [\App\Http\Controllers\ReportController::class, 'index']);
-        Route::post('/api/reports', [\App\Http\Controllers\ReportController::class, 'store']);
-        Route::delete('/api/reports/{id}', [\App\Http\Controllers\ReportController::class, 'destroy']);
+        Route::get('/app-api/documents', [\App\Http\Controllers\DocumentController::class, 'index']);
+        Route::post('/app-api/documents', [\App\Http\Controllers\DocumentController::class, 'store']);
+        Route::delete('/app-api/documents/{id}', [\App\Http\Controllers\DocumentController::class, 'destroy']);
+        Route::get('/app-api/reports', [\App\Http\Controllers\ReportController::class, 'index']);
+        Route::post('/app-api/reports', [\App\Http\Controllers\ReportController::class, 'store']);
+        Route::delete('/app-api/reports/{id}', [\App\Http\Controllers\ReportController::class, 'destroy']);
         
         // Landing Manager API
-        Route::put('/api/landing/content', [\App\Http\Controllers\LandingContentController::class, 'update']);
-        Route::post('/api/landing/media', [\App\Http\Controllers\LandingMediaController::class, 'store']);
-        Route::put('/api/landing/media', [\App\Http\Controllers\LandingMediaController::class, 'update']);
-        Route::delete('/api/landing/media', [\App\Http\Controllers\LandingMediaController::class, 'destroy']);
+        Route::put('/app-api/landing/content', [\App\Http\Controllers\LandingContentController::class, 'update']);
+        Route::post('/app-api/landing/media', [\App\Http\Controllers\LandingMediaController::class, 'store']);
+        Route::put('/app-api/landing/media', [\App\Http\Controllers\LandingMediaController::class, 'update']);
+        Route::delete('/app-api/landing/media', [\App\Http\Controllers\LandingMediaController::class, 'destroy']);
         
-        Route::get('/api/projects', [\App\Http\Controllers\ProjectController::class, 'apiIndex']);
-        Route::get('/api/projects/{id}/analytics', [\App\Http\Controllers\ProjectController::class, 'analytics']);
+        Route::get('/app-api/projects', [\App\Http\Controllers\ProjectController::class, 'apiIndex']);
+        Route::get('/app-api/projects/{id}/analytics', [\App\Http\Controllers\ProjectController::class, 'analytics']);
     });
 });
 
 require __DIR__.'/auth.php';
+
+

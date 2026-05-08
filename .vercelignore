@@ -1,9 +1,5 @@
-/.phpunit.cache
+.git
 /node_modules
-/public/build
-/public/hot
-/public/storage
-/storage/*.key
 /vendor
 .env
 .env.backup
@@ -17,6 +13,5 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-
-.vercel
-.env*.local
+tests
+public/hot

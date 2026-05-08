@@ -15,15 +15,19 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Super Admin',
-            'email' => 'admin@natagroup.com',
-            'role' => 'SUPER_ADMIN',
-            'password' => bcrypt('password'),
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@natagroup.com'],
+            [
+                'name' => 'Super Admin',
+                'role' => 'SUPER_ADMIN',
+                'password' => bcrypt('password'),
+            ]
+        );
 
         $this->call([
             ProjectSeeder::class,
+            HelpdeskSeeder::class,
+            BugSeeder::class,
         ]);
     }
 }

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('user_id')->index(); // uuid user id
+            $table->uuid('user_id')->index(); // uuid user id
             
             $table->string('title');
             $table->text('message');

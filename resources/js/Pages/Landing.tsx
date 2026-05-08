@@ -92,8 +92,8 @@ export default function Landing() {
     const fetchContent = async () => {
       try {
         const [contentRes, mediaRes] = await Promise.all([
-          axios.get('/api/landing/content'),
-          axios.get('/api/landing/media'),
+          axios.get('/app-api/landing/content'),
+          axios.get('/app-api/landing/media'),
         ]);
 
         if (contentRes.data.success) {

@@ -47,7 +47,7 @@ export default function MediaManager() {
   const fetchMedia = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/landing/media');
+      const response = await axios.get('/app-api/landing/media');
       const data = response.data;
       if (data.success) {
         setMedia(data.data);
@@ -91,7 +91,7 @@ export default function MediaManager() {
     e.preventDefault();
 
     try {
-      const url = '/api/landing/media';
+      const url = '/app-api/landing/media';
       const submitData = new FormData();
       if (editingId) submitData.append('id', editingId);
       submitData.append('type', formData.type);
@@ -143,7 +143,7 @@ export default function MediaManager() {
     if (!result.isConfirmed) return;
 
     try {
-      const response = await axios.delete(`/api/landing/media?id=${id}`);
+      const response = await axios.delete(`/app-api/landing/media?id=${id}`);
       const data = response.data;
 
       if (data.success) {

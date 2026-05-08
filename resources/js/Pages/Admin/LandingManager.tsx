@@ -43,7 +43,7 @@ export default function LandingManager() {
 
   const fetchContent = async () => {
     try {
-      const response = await axios.get('/api/landing/content');
+      const response = await axios.get('/app-api/landing/content');
       const data = response.data;
       if (data.success) {
         setContent(data.data);
@@ -60,7 +60,7 @@ export default function LandingManager() {
     
     setSaving(true);
     try {
-      const response = await axios.put('/api/landing/content', content);
+      const response = await axios.put('/app-api/landing/content', content);
       const data = response.data;
       if (data.success) {
         setEditingSection(null);

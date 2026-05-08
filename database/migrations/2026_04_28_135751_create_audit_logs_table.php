@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('audit_logs', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('user_id')->index(); // uuid user id
+            $table->uuid('user_id')->index(); // uuid user id
             
             $table->string('action');
             $table->string('entity_type')->index();

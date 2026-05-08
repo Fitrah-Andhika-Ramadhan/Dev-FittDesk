@@ -48,12 +48,12 @@ export default function Login({ status }: { status?: string }) {
                   *
                 </div>
                 <h2 className="text-5xl xl:text-6xl font-black leading-tight">
-                  Hello
+                  Integrated
                   <br />
-                  FittDesk! 👋
+                  Support Center
                 </h2>
                 <p className="text-base xl:text-lg text-white/80 max-w-lg leading-relaxed">
-                  Kelola proyek, SPR, dokumen, dan laporan dari satu dashboard yang bersih dan profesional.
+                  Layanan terpadu pelaporan kendala IT, Knowledge Base, dan dokumentasi operasional perusahaan.......
                 </p>
               </div>
             </div>
@@ -61,9 +61,9 @@ export default function Login({ status }: { status?: string }) {
             <div className="relative">
               <div className="grid grid-cols-3 gap-4 max-w-lg mb-8">
                 {[
-                  ['Projects', '01'],
-                  ['Docs', 'Live'],
-                  ['SPR', 'Ready'],
+                  ['Tickets', '24/7'],
+                  ['Knowledge', 'Live'],
+                  ['IT Support', 'Ready'],
                 ].map(([label, value]) => (
                   <div key={label as string} className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur">
                     <p className="text-xs uppercase tracking-[0.25em] text-white/70">{label}</p>
@@ -174,7 +174,7 @@ export default function Login({ status }: { status?: string }) {
                       </div>
                       <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                         <p className="text-sm font-semibold text-slate-900 mb-1">System Ready</p>
-                        <p className="text-xs text-slate-500">Project control, docs, reports, and SPR are available.</p>
+                        <p className="text-xs text-slate-500">IT Support, Knowledge Base, and Reporting systems are available.</p>
                       </div>
                     </div>
                   </form>

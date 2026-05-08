@@ -9,7 +9,7 @@ use App\Models\Phase;
 use App\Models\Analytics;
 use App\Models\Block;
 use App\Models\Unit;
-use App\Models\Spr;
+
 use App\Models\User;
 use Carbon\Carbon;
 
@@ -120,28 +120,28 @@ class ProjectSeeder extends Seeder
                 if ($saleStatus !== 'AVAILABLE') {
                     $user = User::first(); // Just attach to the first user (admin) for demo
                     
-                    Spr::create([
-                        'user_id' => $user->id,
-                        'unit_id' => $unit->id,
-                        'project_id' => $project->id,
-                        'project_name' => $project->name,
-                        'buyer_name' => 'Budi Dummy ' . $blockName . $i,
-                        'buyer_ktp' => '320123456789' . rand(1000, 9999),
-                        'buyer_contact' => '0812' . rand(10000000, 99999999),
-                        'buyer_email' => 'budi' . $blockName . $i . '@example.com',
-                        'buyer_address' => 'Jl. Dummy Residence No. ' . $i,
-                        'buyer_job' => 'Pegawai Swasta',
-                        'buyer_income' => rand(10, 25) * 1000000,
-                        'unit_block' => $block->name,
-                        'unit_number' => $unit->unit_code,
-                        'house_type' => $unit->unit_type,
-                        'land_area' => $unit->land_area,
-                        'building_area' => $unit->building_area,
-                        'price' => $unit->price,
-                        'payment_scheme' => ['CASH', 'KPR', 'INSTALLMENT'][rand(0, 2)],
-                        'status' => $saleStatus === 'RESERVED' ? 'SUBMITTED' : 'APPROVED',
-                        'booking_fee' => 5000000,
-                    ]);
+                    // Spr::create([
+                    //     'user_id' => $user->id,
+                    //     'unit_id' => $unit->id,
+                    //     'project_id' => $project->id,
+                    //     'project_name' => $project->name,
+                    //     'buyer_name' => 'Budi Dummy ' . $blockName . $i,
+                    //     'buyer_ktp' => '320123456789' . rand(1000, 9999),
+                    //     'buyer_contact' => '0812' . rand(10000000, 99999999),
+                    //     'buyer_email' => 'budi' . $blockName . $i . '@example.com',
+                    //     'buyer_address' => 'Jl. Dummy Residence No. ' . $i,
+                    //     'buyer_job' => 'Pegawai Swasta',
+                    //     'buyer_income' => rand(10, 25) * 1000000,
+                    //     'unit_block' => $block->name,
+                    //     'unit_number' => $unit->unit_code,
+                    //     'house_type' => $unit->unit_type,
+                    //     'land_area' => $unit->land_area,
+                    //     'building_area' => $unit->building_area,
+                    //     'price' => $unit->price,
+                    //     'payment_scheme' => ['CASH', 'KPR', 'INSTALLMENT'][rand(0, 2)],
+                    //     'status' => $saleStatus === 'RESERVED' ? 'SUBMITTED' : 'APPROVED',
+                    //     'booking_fee' => 5000000,
+                    // ]);
 
                     $unit->update([
                         'buyer_name' => 'Budi Dummy ' . $blockName . $i,

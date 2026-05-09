@@ -8,7 +8,7 @@ export default function Dashboard({ stats, auth }: any) {
   const isAdmin = auth?.user?.role === 'SUPER_ADMIN' || auth?.user?.role === 'ADMIN';
 
   return (
-    <AuthenticatedLayout user={auth.user}>
+    <AuthenticatedLayout>
       <Head title="Dashboard" />
       
       {/* Welcome Banner */}

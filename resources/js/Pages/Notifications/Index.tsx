@@ -17,7 +17,7 @@ export default function Index({ auth, notificationsList }: PageProps & { notific
     };
 
     return (
-        <AuthenticatedLayout user={auth.user}>
+        <AuthenticatedLayout>
             <Head title="Semua Notifikasi" />
 
             <div className="py-6">

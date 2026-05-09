@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { Bell, LogOut, User, ExternalLink, CheckCircle } from 'lucide-react';
 import { Button } from '@/Components/ui/button';
 import { Link, usePage, router } from '@inertiajs/react';

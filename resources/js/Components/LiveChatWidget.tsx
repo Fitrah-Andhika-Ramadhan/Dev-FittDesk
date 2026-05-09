@@ -1,26 +1,75 @@
 import { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, Bot } from 'lucide-react';
 import { Button } from './ui/button';
+import axios from 'axios';
 
 interface Message {
     id: number;
-    text: string;
-    sender: 'user' | 'bot';
-    timestamp: Date;
+    message: string;
+    sender_type: 'guest' | 'admin';
+    created_at: string;
 }
 
 export function LiveChatWidget() {
     const [isOpen, setIsOpen] = useState(false);
+    const [sessionId, setSessionId] = useState<number | null>(null);
     const [messages, setMessages] = useState<Message[]>([
         {
-            id: 1,
-            text: 'Halo! Ada yang bisa kami bantu seputar layanan FittDesk?',
-            sender: 'bot',
-            timestamp: new Date()
+            id: 0,
+            message: 'Halo! Ada yang bisa kami bantu seputar layanan FittDesk?',
+            sender_type: 'admin',
+            created_at: new Date().toISOString()
         }
     ]);
     const [inputValue, setInputValue] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    // Init chat session when opening for the first time
+    useEffect(() => {
+        if (isOpen && !sessionId) {
+            const guestId = localStorage.getItem('fittdesk_guest_id') || '';
+            axios.post('/app-api/chat/init', { guest_id: guestId })
+                .then(res => {
+                    setSessionId(res.data.session_id);
+                    localStorage.setItem('fittdesk_guest_id', res.data.guest_id);
+                    fetchMessages(res.data.session_id);
+                })
+                .catch(err => console.error(err));
+        }
+    }, [isOpen]);
+
+    // Poll messages every 3 seconds if session is active
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+        if (isOpen && sessionId) {
+            interval = setInterval(() => {
+                fetchMessages(sessionId);
+            }, 3000);
+        }
+        return () => {
+            if (interval) clearInterval(interval);
+        };
+    }, [isOpen, sessionId]);
+
+    const fetchMessages = async (sid: number) => {
+        try {
+            const res = await axios.get(`/app-api/chat/messages/${sid}`);
+            if (res.data && res.data.length > 0) {
+                // Add initial bot greeting if no messages yet
+                setMessages([
+                    {
+                        id: 0,
+                        message: 'Halo! Ada yang bisa kami bantu seputar layanan FittDesk?',
+                        sender_type: 'admin',
+                        created_at: new Date().toISOString()
+                    },
+                    ...res.data
+                ]);
+            }
+        } catch (error) {
+            console.error('Failed to fetch messages', error);
+        }
+    };
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -30,30 +79,31 @@ export function LiveChatWidget() {
         scrollToBottom();
     }, [messages, isOpen]);
 
-    const handleSendMessage = (e: React.FormEvent) => {
+    const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!inputValue.trim()) return;
+        if (!inputValue.trim() || !sessionId) return;
 
-        const newUserMessage: Message = {
-            id: Date.now(),
-            text: inputValue,
-            sender: 'user',
-            timestamp: new Date()
-        };
-
-        setMessages(prev => [...prev, newUserMessage]);
+        const tempMsg = inputValue;
         setInputValue('');
 
-        // Simulate bot response
-        setTimeout(() => {
-            const botResponse: Message = {
-                id: Date.now() + 1,
-                text: 'Terima kasih atas pesannya! Tim support kami akan segera merespons Anda. Silakan tinggalkan email Anda jika ingin dihubungi lebih lanjut.',
-                sender: 'bot',
-                timestamp: new Date()
-            };
-            setMessages(prev => [...prev, botResponse]);
-        }, 1500);
+        // Optimistic update
+        setMessages(prev => [...prev, {
+            id: Date.now(),
+            message: tempMsg,
+            sender_type: 'guest',
+            created_at: new Date().toISOString()
+        }]);
+
+        try {
+            await axios.post('/app-api/chat/send', {
+                session_id: sessionId,
+                message: tempMsg
+            });
+            fetchMessages(sessionId);
+        } catch (error) {
+            console.error('Failed to send message', error);
+            setInputValue(tempMsg); // restore on failure
+        }
     };
 
     return (
@@ -87,22 +137,22 @@ export function LiveChatWidget() {
                     {messages.map((msg) => (
                         <div 
                             key={msg.id} 
-                            className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}
+                            className={`flex ${msg.sender_type === 'guest' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}
                         >
                             <div 
                                 className={`max-w-[85%] p-3 text-[14px] leading-relaxed shadow-sm ${
-                                    msg.sender === 'user' 
+                                    msg.sender_type === 'guest' 
                                         ? 'bg-blue-600 text-white rounded-2xl rounded-br-sm' 
                                         : 'bg-white text-gray-800 border border-gray-100 rounded-2xl rounded-bl-sm'
                                 }`}
                             >
-                                {msg.text}
+                                {msg.message}
                                 <div 
                                     className={`text-[10px] mt-1.5 text-right font-medium ${
-                                        msg.sender === 'user' ? 'text-blue-200' : 'text-gray-400'
+                                        msg.sender_type === 'guest' ? 'text-blue-200' : 'text-gray-400'
                                     }`}
                                 >
-                                    {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                 </div>
                             </div>
                         </div>

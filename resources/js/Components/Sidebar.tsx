@@ -16,6 +16,7 @@ import {
   Image,
   Activity,
   Bug,
+  MessageSquare,
 } from 'lucide-react';
 import { Button } from '@/Components/ui/button';
 
@@ -79,6 +80,11 @@ export default function Sidebar({ user }: SidebarProps) {
   ];
 
   const adminMenuItems = [
+    {
+      label: 'Live Chats',
+      icon: MessageSquare,
+      href: '/admin/live-chats',
+    },
     {
       label: 'Manage Landing',
       icon: FileText,

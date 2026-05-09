@@ -97,8 +97,19 @@ Route::middleware('auth')->group(function () {
         
         Route::get('/app-api/projects', [\App\Http\Controllers\ProjectController::class, 'apiIndex']);
         Route::get('/app-api/projects/{id}/analytics', [\App\Http\Controllers\ProjectController::class, 'analytics']);
+        
+        // Admin Live Chat
+        Route::get('/admin/live-chats', [\App\Http\Controllers\Admin\AdminLiveChatController::class, 'index'])->name('admin.live-chats');
+        Route::get('/app-api/admin/live-chats/{session}/messages', [\App\Http\Controllers\Admin\AdminLiveChatController::class, 'getMessages']);
+        Route::post('/app-api/admin/live-chats/{session}/send', [\App\Http\Controllers\Admin\AdminLiveChatController::class, 'sendMessage']);
+        Route::post('/app-api/admin/live-chats/{session}/close', [\App\Http\Controllers\Admin\AdminLiveChatController::class, 'closeSession']);
     });
 });
+
+// Guest Live Chat API
+Route::post('/app-api/chat/init', [\App\Http\Controllers\LiveChatController::class, 'init']);
+Route::get('/app-api/chat/messages/{sessionId}', [\App\Http\Controllers\LiveChatController::class, 'getMessages']);
+Route::post('/app-api/chat/send', [\App\Http\Controllers\LiveChatController::class, 'sendMessage']);
 
 require __DIR__.'/auth.php';
 

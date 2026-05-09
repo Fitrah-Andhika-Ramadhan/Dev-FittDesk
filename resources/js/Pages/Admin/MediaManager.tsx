@@ -366,9 +366,21 @@ export default function MediaManager() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                        <Video className="w-12 h-12 text-gray-400" />
-                      </div>
+                      item.url.includes('youtube.com') || item.url.includes('youtu.be') || item.url.includes('vimeo.com') ? (
+                        <iframe
+                          src={item.url}
+                          title={item.title}
+                          className="w-full h-full pointer-events-none"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        />
+                      ) : (
+                        <video
+                          src={item.url}
+                          title={item.title}
+                          className="w-full h-full object-cover"
+                          controls
+                        />
+                      )
                     )}
                   </div>
 

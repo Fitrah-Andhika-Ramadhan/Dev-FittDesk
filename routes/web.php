@@ -144,6 +144,38 @@ Route::get('/app-api/run-migrations', function () {
     }
 });
 
+Route::get('/app-api/generate-dummy-notifs', function () {
+    $admin = \App\Models\User::where('email', 'admin@fittdesk.com')->first();
+    if ($admin) {
+        \App\Models\Notification::create([
+            'user_id' => $admin->id,
+            'title' => 'Tiket Baru Masuk',
+            'message' => 'Tiket baru: Masalah Jaringan WiFi (Prioritas: HIGH) dari Budi Santoso.',
+            'type' => 'TICKET_CREATED',
+            'is_read' => false,
+            'created_at' => now()->subMinutes(5)
+        ]);
+        \App\Models\Notification::create([
+            'user_id' => $admin->id,
+            'title' => 'Laporan Harian Baru Masuk',
+            'message' => 'Laporan Harian baru dari Ahmad Staff untuk project Instalasi Server telah dibuat.',
+            'type' => 'REPORT_CREATED',
+            'is_read' => false,
+            'created_at' => now()->subMinutes(30)
+        ]);
+        \App\Models\Notification::create([
+            'user_id' => $admin->id,
+            'title' => 'Update Status Tiket',
+            'message' => 'Status tiket "Printer Rusak" telah diubah menjadi RESOLVED.',
+            'type' => 'TICKET_UPDATED',
+            'is_read' => true,
+            'created_at' => now()->subHours(2)
+        ]);
+        return 'Berhasil membuat 3 notifikasi dummy untuk admin@fittdesk.com!';
+    }
+    return 'Admin tidak ditemukan.';
+});
+
 require __DIR__.'/auth.php';
 
 

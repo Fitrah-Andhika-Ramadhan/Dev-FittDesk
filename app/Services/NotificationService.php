@@ -16,7 +16,7 @@ class NotificationService
             Notification::create([
                 'user_id' => $admin->id,
                 'title' => 'Tiket Baru Masuk',
-                'message' => "Tiket baru: {$ticket->subject} (Prioritas: {$ticket->priority}) dari {$ticket->user->name}.",
+                'message' => "Subjek : {$ticket->subject}\nPrioritas : {$ticket->priority}\nPengirim : {$ticket->user->name}",
                 'type' => 'TICKET_CREATED',
             ]);
         }
@@ -28,7 +28,7 @@ class NotificationService
         Notification::create([
             'user_id' => $ticket->user_id,
             'title' => 'Update Status Tiket',
-            'message' => "Status tiket '{$ticket->subject}' telah diubah menjadi {$ticket->status}.",
+            'message' => "Subjek : {$ticket->subject}\nStatus Baru : {$ticket->status}\nSistem : IT Helpdesk",
             'type' => 'TICKET_UPDATED',
         ]);
     }
@@ -41,8 +41,8 @@ class NotificationService
         foreach ($admins as $admin) {
             Notification::create([
                 'user_id' => $admin->id,
-                'title' => 'Laporan Harian Baru Masuk',
-                'message' => "Laporan Harian baru dari {$report->user->name} untuk project {$report->project_name} telah dibuat.",
+                'title' => 'Laporan Harian Baru',
+                'message' => "Proyek : {$report->project_name}\nJumlah Pekerja : {$report->workers_count} Orang\nPengirim : {$report->user->name}",
                 'type' => 'REPORT_CREATED',
             ]);
         }
@@ -53,8 +53,8 @@ class NotificationService
         // Notify the report owner that the status was updated
         Notification::create([
             'user_id' => $report->user_id,
-            'title' => 'Update Status Laporan Harian',
-            'message' => "Status Laporan Harian untuk project {$report->project_name} telah diubah menjadi {$report->status}.",
+            'title' => 'Update Laporan Harian',
+            'message' => "Proyek : {$report->project_name}\nStatus Baru : {$report->status}\nSistem : Project Management",
             'type' => 'REPORT_UPDATED',
         ]);
     }

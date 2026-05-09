@@ -38,7 +38,16 @@ export default function Navbar({ user, onLogout }: NavbarProps) {
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+
+    // Polling for new notifications every 30 seconds
+    const interval = setInterval(() => {
+      router.reload({ only: ['auth'], preserveState: true, preserveScroll: true });
+    }, 30000);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      clearInterval(interval);
+    };
   }, []);
 
   return (
@@ -114,7 +123,7 @@ export default function Navbar({ user, onLogout }: NavbarProps) {
                   )}
               </div>
               <div className="p-2 text-center border-t border-gray-100 mt-1">
-                  <Link href="#" className="text-xs text-gray-500 hover:text-gray-700 font-medium">See All Notification</Link>
+                  <Link href={route('notifications.index')} className="text-xs text-gray-500 hover:text-gray-700 font-medium" onClick={() => setIsNotifOpen(false)}>See All Notification</Link>
               </div>
             </div>
           )}

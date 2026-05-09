@@ -381,12 +381,24 @@ export default function Landing() {
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                       />
                     ) : (
-                      <iframe
-                        src={item.url}
-                        title={item.title}
-                        className="w-full h-full pointer-events-none group-hover:scale-105 transition-transform duration-700"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      />
+                      item.url.includes('youtube.com') || item.url.includes('youtu.be') || item.url.includes('vimeo.com') ? (
+                        <iframe
+                          src={item.url}
+                          title={item.title}
+                          className="w-full h-full pointer-events-none group-hover:scale-105 transition-transform duration-700"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        />
+                      ) : (
+                        <video
+                          src={item.url}
+                          title={item.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                        />
+                      )
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
                     

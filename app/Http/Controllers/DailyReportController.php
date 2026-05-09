@@ -74,7 +74,19 @@ class DailyReportController extends Controller
             $data['photo_path'] = $request->file('photo')->store('daily_reports', 'public');
         }
 
-        DailyReport::create($data);
+        $report = DailyReport::create($data);
+
+        if ($report->status === 'SUBMITTED' || $report->status === 'APPROVED') {
+            $admins = \App\Models\User::whereIn('role', ['SUPER_ADMIN', 'ADMIN'])->get();
+            foreach ($admins as $admin) {
+                \App\Models\Notification::create([
+                    'user_id' => $admin->id,
+                    'title' => 'Laporan Harian Baru',
+                    'message' => auth()->user()->name . ' telah mensubmit laporan harian untuk ' . $project->name,
+                    'type' => 'report_submitted'
+                ]);
+            }
+        }
 
         return redirect()->route('daily_reports.index')->with('success', 'Laporan Harian Kerja berhasil dibuat.');
     }
@@ -125,7 +137,17 @@ class DailyReportController extends Controller
             $data['photo_path'] = $request->file('photo')->store('daily_reports', 'public');
         }
 
+        $oldStatus = $dailyReport->status;
         $dailyReport->update($data);
+
+        if ($oldStatus !== $dailyReport->status) {
+            \App\Models\Notification::create([
+                'user_id' => $dailyReport->user_id,
+                'title' => 'Status Laporan Diperbarui',
+                'message' => 'Laporan harian Anda tanggal ' . \Carbon\Carbon::parse($dailyReport->report_date)->format('d M Y') . ' sekarang berstatus ' . $dailyReport->status,
+                'type' => 'report_updated'
+            ]);
+        }
 
         return redirect()->route('daily_reports.index')->with('success', 'Laporan Harian Kerja berhasil diperbarui.');
     }

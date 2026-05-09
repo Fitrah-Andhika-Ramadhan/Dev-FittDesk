@@ -51,7 +51,18 @@ class TicketController extends Controller
         $validated['user_id'] = auth()->id();
         $validated['status'] = 'OPEN';
 
-        Ticket::create($validated);
+        $ticket = Ticket::create($validated);
+
+        // Notify Admins
+        $admins = User::whereIn('role', ['SUPER_ADMIN', 'ADMIN'])->get();
+        foreach ($admins as $admin) {
+            \App\Models\Notification::create([
+                'user_id' => $admin->id,
+                'title' => 'Tiket Baru: ' . $ticket->subject,
+                'message' => auth()->user()->name . ' telah membuat tiket baru dengan prioritas ' . $ticket->priority,
+                'type' => 'ticket_created'
+            ]);
+        }
 
         return redirect()->route('tickets.index')->with('success', 'Tiket berhasil dibuat.');
     }
@@ -85,7 +96,17 @@ class TicketController extends Controller
             'assigned_to' => 'nullable|exists:users,id'
         ]);
 
+        $oldStatus = $ticket->status;
         $ticket->update($validated);
+
+        if ($oldStatus !== $ticket->status) {
+            \App\Models\Notification::create([
+                'user_id' => $ticket->user_id,
+                'title' => 'Status Tiket Diperbarui',
+                'message' => 'Tiket "' . $ticket->subject . '" Anda sekarang berstatus ' . $ticket->status,
+                'type' => 'ticket_updated'
+            ]);
+        }
 
         return back()->with('success', 'Tiket berhasil diperbarui.');
     }

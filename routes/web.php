@@ -45,6 +45,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/bugs', [\App\Http\Controllers\BugReportController::class, 'index'])->name('bugs.index');
     Route::post('/bugs', [\App\Http\Controllers\BugReportController::class, 'store'])->name('bugs.store');
     
+    // Notifications
+    Route::get('/app-api/notifications', [\App\Http\Controllers\NotificationController::class, 'index']);
+    Route::post('/app-api/notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead']);
+    Route::post('/app-api/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead']);
+    Route::delete('/app-api/notifications/{id}', [\App\Http\Controllers\NotificationController::class, 'destroy']);
+
+    
     // Protect all Admin features
     Route::middleware([\App\Http\Middleware\AdminMiddleware::class])->group(function () {
         

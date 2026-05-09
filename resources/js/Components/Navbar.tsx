@@ -55,16 +55,49 @@ export default function Navbar({ user, onLogout }: NavbarProps) {
             {notifications.length === 0 ? (
                 <div className="p-4 text-sm text-gray-500 text-center">Belum ada notifikasi.</div>
             ) : (
-                notifications.map((notif: any) => (
-                    <DropdownMenuItem key={notif.id} className="flex flex-col items-start p-3 focus:bg-gray-50 cursor-default">
-                        <div className="flex items-center gap-2 mb-1">
-                            <span className={`w-2 h-2 rounded-full ${notif.is_read ? 'bg-gray-300' : 'bg-blue-500'}`}></span>
-                            <span className="font-semibold text-sm">{notif.title}</span>
+                <>
+                {notifications.map((notif: any) => (
+                    <DropdownMenuItem 
+                        key={notif.id} 
+                        className="flex flex-col items-start p-3 focus:bg-gray-50 cursor-pointer"
+                        onClick={async () => {
+                            if (!notif.is_read) {
+                                await fetch(`/app-api/notifications/${notif.id}/read`, {
+                                    method: 'POST',
+                                    headers: { 'X-CSRF-TOKEN': (document.head.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '' }
+                                });
+                                router.reload({ only: ['auth'] });
+                            }
+                        }}
+                    >
+                        <div className="flex items-center gap-2 mb-1 w-full justify-between">
+                            <div className="flex items-center gap-2">
+                                <span className={`w-2 h-2 rounded-full ${notif.is_read ? 'bg-gray-300' : 'bg-blue-500'}`}></span>
+                                <span className="font-semibold text-sm">{notif.title}</span>
+                            </div>
                         </div>
-                        <p className="text-xs text-gray-600 line-clamp-3">{notif.message}</p>
+                        <p className="text-xs text-gray-600 line-clamp-3 mt-1">{notif.message}</p>
                         <span className="text-[10px] text-gray-400 mt-2">{new Date(notif.created_at).toLocaleString('id-ID')}</span>
                     </DropdownMenuItem>
-                ))
+                ))}
+                <div className="p-2 text-center border-t border-gray-100">
+                    <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="text-xs text-blue-600 w-full"
+                        onClick={async (e) => {
+                            e.preventDefault();
+                            await fetch(`/app-api/notifications/mark-all-read`, {
+                                method: 'POST',
+                                headers: { 'X-CSRF-TOKEN': (document.head.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '' }
+                            });
+                            router.reload({ only: ['auth'] });
+                        }}
+                    >
+                        Tandai semua dibaca
+                    </Button>
+                </div>
+                </>
             )}
           </DropdownMenuContent>
         </DropdownMenu>

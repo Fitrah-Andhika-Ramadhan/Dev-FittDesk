@@ -1,0 +1,53 @@
+name: FittDesk CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - Dev-FittDesk
+      - qa-FittDesk
+      - FittDesk
+  pull_request:
+    branches:
+      - qa-FittDesk
+      - FittDesk
+
+jobs:
+  build-and-test:
+    name: Build & Verify Code
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install NPM Dependencies
+        run: npm ci
+        
+      - name: Build Frontend Assets (Vite/React)
+        run: npm run build
+        
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite3, pdo_sqlite, bcmath, intl, gd
+          coverage: none
+          
+      - name: Install Composer Dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+        
+      - name: Prepare Environment
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+        
+      - name: Generate Application Key
+        run: php artisan key:generate
+        
+      # You can uncomment this once you have PHPUnit tests written
+      # - name: Execute Tests
+      #   run: php artisan test

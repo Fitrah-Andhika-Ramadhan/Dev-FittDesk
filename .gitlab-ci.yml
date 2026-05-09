@@ -1,0 +1,21 @@
+stages:
+  - build_and_test
+
+build_and_verify:
+  stage: build_and_test
+  image: lorisleiva/laravel-docker:8.2
+  script:
+    - echo "Installing NPM Dependencies..."
+    - npm ci
+    - echo "Building Frontend Assets..."
+    - npm run build
+    - echo "Installing Composer Dependencies..."
+    - composer install --no-interaction --prefer-dist --optimize-autoloader
+    - echo "Setting up environment..."
+    - cp .env.example .env
+    - php artisan key:generate
+    # - php artisan test # Uncomment to run tests
+  only:
+    - Dev-FittDesk
+    - qa-FittDesk
+    - FittDesk

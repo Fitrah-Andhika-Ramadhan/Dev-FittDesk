@@ -3,45 +3,59 @@
 namespace App\Services;
 
 use App\Models\Notification;
-use Illuminate\Support\Facades\Log;
+use App\Models\User;
 
 class NotificationService
 {
-    public static function sendSprUpdate($user, $spr, $status)
+    public static function sendTicketCreated($ticket)
     {
-        $messages = [
-            'APPROVED' => "Selamat! Pengajuan SPR Anda untuk unit {$spr->unit_block}/{$spr->unit_number} telah DISETUJUI. Silakan login ke sistem untuk mengunggah bukti pembayaran DP/Booking Fee.",
-            'REJECTED' => "Mohon maaf, pengajuan SPR Anda untuk unit {$spr->unit_block}/{$spr->unit_number} belum dapat kami setujui. Terima kasih atas ketertarikan Anda.",
-            'WAITING_PAYMENT' => "Terima kasih. Bukti pembayaran Booking Fee Anda telah kami terima dan sedang dalam proses verifikasi.",
-            'BOOKING_CONFIRMED' => "Selamat! Pembayaran Anda telah dikonfirmasi. Unit {$spr->unit_block}/{$spr->unit_number} resmi kami kunci untuk Anda (Status: SOLD)."
-        ];
-
-        if (!isset($messages[$status])) {
-            return;
-        }
-
-        $message = $messages[$status];
-
-        // 1. Simpan ke Database (Notifikasi In-App)
-        if ($user) {
+        // Notify all admins that a new ticket was created
+        $admins = User::whereIn('role', ['SUPER_ADMIN', 'ADMIN'])->get();
+        
+        foreach ($admins as $admin) {
             Notification::create([
-                'user_id' => $user->id,
-                'title' => 'Update Status SPR',
-                'message' => $message,
-                'type' => 'SPR_UPDATE',
+                'user_id' => $admin->id,
+                'title' => 'Tiket Baru Masuk',
+                'message' => "Tiket baru: {$ticket->subject} (Prioritas: {$ticket->priority}) dari {$ticket->user->name}.",
+                'type' => 'TICKET_CREATED',
             ]);
         }
+    }
 
-        // 2. Mocking Pengiriman WhatsApp & Email via Log
-        Log::info("====================================");
-        Log::info("🔔 WHATSAPP BROADCAST MOCKUP");
-        Log::info("To: " . $spr->buyer_contact);
-        Log::info("Message: " . $message);
-        Log::info("------------------------------------");
-        Log::info("✉️ EMAIL SENT MOCKUP");
-        Log::info("To: " . $spr->buyer_email);
-        Log::info("Subject: Update Status SPR Nata Group");
-        Log::info("Body: " . $message);
-        Log::info("====================================");
+    public static function sendTicketUpdated($ticket)
+    {
+        // Notify the ticket owner that the status/assignee was updated
+        Notification::create([
+            'user_id' => $ticket->user_id,
+            'title' => 'Update Status Tiket',
+            'message' => "Status tiket '{$ticket->subject}' telah diubah menjadi {$ticket->status}.",
+            'type' => 'TICKET_UPDATED',
+        ]);
+    }
+
+    public static function sendDailyReportCreated($report)
+    {
+        // Notify all admins
+        $admins = User::whereIn('role', ['SUPER_ADMIN', 'ADMIN'])->get();
+        
+        foreach ($admins as $admin) {
+            Notification::create([
+                'user_id' => $admin->id,
+                'title' => 'Laporan Harian Baru Masuk',
+                'message' => "Laporan Harian baru dari {$report->user->name} untuk project {$report->project_name} telah dibuat.",
+                'type' => 'REPORT_CREATED',
+            ]);
+        }
+    }
+
+    public static function sendDailyReportUpdated($report)
+    {
+        // Notify the report owner that the status was updated
+        Notification::create([
+            'user_id' => $report->user_id,
+            'title' => 'Update Status Laporan Harian',
+            'message' => "Status Laporan Harian untuk project {$report->project_name} telah diubah menjadi {$report->status}.",
+            'type' => 'REPORT_UPDATED',
+        ]);
     }
 }

@@ -40,17 +40,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/tickets/create', [TicketController::class, 'create'])->name('tickets.create');
     Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
     Route::get('/tickets/{ticket}', [TicketController::class, 'show'])->name('tickets.show');
+
+    // Notifications
+    Route::post('/notifications/read-all', function () {
+        \App\Models\Notification::where('user_id', auth()->id())
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
+        return back();
+    })->name('notifications.readAll');
+
+    Route::post('/notifications/{notification}/read', function (\App\Models\Notification $notification) {
+        if ($notification->user_id === auth()->id()) {
+            $notification->update(['is_read' => true]);
+        }
+        return back();
+    })->name('notifications.read');
     
     // Bug Reports
     Route::get('/bugs', [\App\Http\Controllers\BugReportController::class, 'index'])->name('bugs.index');
     Route::post('/bugs', [\App\Http\Controllers\BugReportController::class, 'store'])->name('bugs.store');
-    
-    // Notifications
-    Route::get('/app-api/notifications', [\App\Http\Controllers\NotificationController::class, 'index']);
-    Route::post('/app-api/notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead']);
-    Route::post('/app-api/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead']);
-    Route::delete('/app-api/notifications/{id}', [\App\Http\Controllers\NotificationController::class, 'destroy']);
-
     
     // Protect all Admin features
     Route::middleware([\App\Http\Middleware\AdminMiddleware::class])->group(function () {
@@ -134,21 +142,6 @@ Route::get('/app-api/run-migrations', function () {
             'error' => $e->getMessage()
         ], 500);
     }
-});
-
-Route::get('/app-api/test-notif', function () {
-    if (!auth()->check()) {
-        return response()->json(['error' => 'Harap login dulu'], 401);
-    }
-    
-    \App\Models\Notification::create([
-        'user_id' => auth()->id(),
-        'title' => '🎉 Uji Coba Notifikasi FittDesk',
-        'message' => 'Halo ' . auth()->user()->name . '! Ini adalah contoh notifikasi dummy. Anda bisa menandainya sebagai telah dibaca dengan mengkliknya.',
-        'type' => 'system_alert'
-    ]);
-    
-    return response()->json(['success' => true, 'message' => 'Notifikasi dummy berhasil dikirim! Silakan refresh halaman web.']);
 });
 
 require __DIR__.'/auth.php';

@@ -2,7 +2,7 @@
 
 import { Bell, LogOut, User, ExternalLink, CheckCircle } from 'lucide-react';
 import { Button } from '@/Components/ui/button';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage, router } from '@inertiajs/react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -50,88 +50,44 @@ export default function Navbar({ user, onLogout }: NavbarProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-80">
-            <DropdownMenuLabel>Notifikasi</DropdownMenuLabel>
+            <div className="flex items-center justify-between pr-4">
+                <DropdownMenuLabel>Notifikasi</DropdownMenuLabel>
+                {unreadCount > 0 && (
+                    <button 
+                        onClick={() => router.post(route('notifications.readAll'), {}, { preserveScroll: true })}
+                        className="text-xs text-blue-600 hover:underline font-medium"
+                    >
+                        Tandai semua dibaca
+                    </button>
+                )}
+            </div>
             <DropdownMenuSeparator />
             {notifications.length === 0 ? (
                 <div className="p-4 text-sm text-gray-500 text-center">Belum ada notifikasi.</div>
             ) : (
-                <>
-                {notifications.map((notif: any) => {
-                    // Simple relative time function
-                    const date = new Date(notif.created_at);
-                    const now = new Date();
-                    const diffMs = now.getTime() - date.getTime();
-                    const diffMins = Math.round(diffMs / 60000);
-                    const diffHours = Math.round(diffMs / 3600000);
-                    const diffDays = Math.round(diffMs / 86400000);
-                    
-                    let timeStr = '';
-                    if (diffMins < 60) timeStr = `${diffMins} menit lalu`;
-                    else if (diffHours < 24) timeStr = `${diffHours} jam lalu`;
-                    else timeStr = `${diffDays} hari lalu`;
-
-                    return (
-                        <DropdownMenuItem 
-                            key={notif.id} 
-                            className={`flex flex-col items-start p-4 cursor-pointer border-b border-gray-50 last:border-0 ${!notif.is_read ? 'bg-blue-50/50 hover:bg-blue-50' : 'hover:bg-gray-50'}`}
-                            onClick={async () => {
-                                // Mark as read if unread
-                                if (!notif.is_read) {
-                                    await fetch(`/app-api/notifications/${notif.id}/read`, {
-                                        method: 'POST',
-                                        headers: { 'X-CSRF-TOKEN': (document.head.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '' }
-                                    });
-                                }
-                                
-                                // Determine redirection url based on type
-                                let redirectUrl = '/dashboard';
-                                if (notif.type.includes('ticket')) redirectUrl = '/tickets';
-                                if (notif.type.includes('report')) redirectUrl = '/daily-reports';
-                                
-                                router.visit(redirectUrl, {
-                                    onSuccess: () => {
-                                        router.reload({ only: ['auth'] });
-                                    }
-                                });
-                            }}
-                        >
-                            <div className="flex items-start gap-3 w-full">
-                                <div className="mt-1">
-                                    <span className={`block w-2.5 h-2.5 rounded-full ${!notif.is_read ? 'bg-blue-600 shadow-sm shadow-blue-200' : 'bg-transparent'}`}></span>
-                                </div>
-                                <div className="flex-1">
-                                    <h4 className={`text-sm ${!notif.is_read ? 'font-bold text-gray-900' : 'font-medium text-gray-700'}`}>
-                                        {notif.title}
-                                    </h4>
-                                    <p className="text-xs text-gray-500 mt-1 line-clamp-2 leading-relaxed">
-                                        {notif.message}
-                                    </p>
-                                    <span className={`text-[10px] mt-2 block ${!notif.is_read ? 'text-blue-600 font-medium' : 'text-gray-400'}`}>
-                                        {timeStr}
-                                    </span>
-                                </div>
-                            </div>
-                        </DropdownMenuItem>
-                    );
-                })}
-                <div className="p-2 text-center border-t border-gray-100 bg-gray-50 rounded-b-md">
-                    <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="text-xs text-gray-600 hover:text-blue-600 font-medium w-full"
-                        onClick={async (e) => {
-                            e.preventDefault();
-                            await fetch(`/app-api/notifications/mark-all-read`, {
-                                method: 'POST',
-                                headers: { 'X-CSRF-TOKEN': (document.head.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '' }
-                            });
-                            router.reload({ only: ['auth'] });
+                notifications.map((notif: any) => (
+                    <DropdownMenuItem 
+                        key={notif.id} 
+                        className="flex flex-col items-start p-3 focus:bg-gray-50 cursor-pointer"
+                        onClick={() => {
+                            if (!notif.is_read) {
+                                router.post(route('notifications.read', notif.id), {}, { preserveScroll: true });
+                            }
+                            if (notif.type.includes('TICKET')) {
+                                router.visit(route('tickets.index'));
+                            } else if (notif.type.includes('REPORT')) {
+                                router.visit(route('daily_reports.index'));
+                            }
                         }}
                     >
-                        Tandai semua dibaca ✓
-                    </Button>
-                </div>
-                </>
+                        <div className="flex items-center gap-2 mb-1 w-full">
+                            <span className={`w-2 h-2 rounded-full flex-shrink-0 ${notif.is_read ? 'bg-gray-300' : 'bg-blue-500'}`}></span>
+                            <span className={`font-semibold text-sm ${notif.is_read ? 'text-gray-500' : 'text-gray-900'}`}>{notif.title}</span>
+                        </div>
+                        <p className={`text-xs line-clamp-3 ${notif.is_read ? 'text-gray-400' : 'text-gray-600'}`}>{notif.message}</p>
+                        <span className="text-[10px] text-gray-400 mt-2">{new Date(notif.created_at).toLocaleString('id-ID')}</span>
+                    </DropdownMenuItem>
+                ))
             )}
           </DropdownMenuContent>
         </DropdownMenu>

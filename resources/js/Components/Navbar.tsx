@@ -81,14 +81,18 @@ export default function Navbar({ user, onLogout }: NavbarProps) {
                         }}
                     >
                         <div className="flex items-center gap-2 mb-1 w-full">
-                            <span className={`w-2 h-2 rounded-full flex-shrink-0 ${notif.is_read ? 'bg-gray-300' : 'bg-blue-500'}`}></span>
+                            <span className={`w-2 h-2 rounded-full flex-shrink-0 ${notif.is_read ? 'bg-transparent' : 'bg-blue-500'}`}></span>
                             <span className={`font-semibold text-sm ${notif.is_read ? 'text-gray-500' : 'text-gray-900'}`}>{notif.title}</span>
                         </div>
-                        <p className={`text-xs line-clamp-3 ${notif.is_read ? 'text-gray-400' : 'text-gray-600'}`}>{notif.message}</p>
-                        <span className="text-[10px] text-gray-400 mt-2">{new Date(notif.created_at).toLocaleString('id-ID')}</span>
+                        <p className={`text-xs pl-4 whitespace-pre-wrap ${notif.is_read ? 'text-gray-400' : 'text-gray-600'}`}>{notif.message}</p>
+                        <span className="text-[10px] pl-4 text-gray-400 mt-2">{notif.created_at ? new Date(notif.created_at).toLocaleString('id-ID') : 'Baru saja'}</span>
                     </DropdownMenuItem>
                 ))
             )}
+            <DropdownMenuSeparator />
+            <div className="p-2 text-center">
+                <Link href="#" className="text-xs text-gray-500 hover:text-gray-700">See All Notification</Link>
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
 

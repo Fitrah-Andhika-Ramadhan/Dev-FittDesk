@@ -176,6 +176,48 @@ Route::get('/app-api/generate-dummy-notifs', function () {
     return 'Admin tidak ditemukan.';
 });
 
+Route::get('/app-api/debug-notifs', function () {
+    $admin = \App\Models\User::where('email', 'admin@fittdesk.com')->first();
+    return [
+        'admin_id' => $admin ? $admin->id : null,
+        'notifications' => $admin ? \App\Models\Notification::where('user_id', $admin->id)->get() : []
+    ];
+});
+
+Route::get('/app-api/generate-mine', function () {
+    $user = auth()->user();
+    if (!$user) {
+        return 'Please login first. Go to /login';
+    }
+
+    \App\Models\Notification::create([
+        'user_id' => $user->id,
+        'title' => 'Review Monitoring Risiko',
+        'message' => "Risiko : Deskripsi Risiko\nUnit Kerja : Sistem Teknologi Informasi\nPengirim : Anita, SE.",
+        'type' => 'TICKET_CREATED',
+        'is_read' => false,
+        'created_at' => now()->subMinutes(2)
+    ]);
+    \App\Models\Notification::create([
+        'user_id' => $user->id,
+        'title' => 'Risiko Korporat Completed',
+        'message' => "Sasaran Perusahaan: Target Safety Performance\nNama Risiko: 26.CRPR.10\nCatatan: Approve 2 RR corporate",
+        'type' => 'REPORT_CREATED',
+        'is_read' => true,
+        'created_at' => now()->subDays(3)
+    ]);
+    \App\Models\Notification::create([
+        'user_id' => $user->id,
+        'title' => 'Risk Register Completed',
+        'message' => "Unit Kerja: Sistem Teknologi Informasi (PT Dahana)\nNama Risiko: Test Peristiwa Risiko",
+        'type' => 'REPORT_UPDATED',
+        'is_read' => false,
+        'created_at' => now()->subDays(4)
+    ]);
+    
+    return 'Berhasil! Silakan kembali ke dashboard.';
+})->middleware(['auth', 'verified']);
+
 require __DIR__.'/auth.php';
 
 

@@ -19,7 +19,9 @@ interface NavbarProps {
 
 export default function Navbar({ user, onLogout }: NavbarProps) {
   const { auth, flash } = usePage().props as any;
-  const notifications = auth?.notifications || [];
+  const initialNotifications = auth?.notifications || [];
+  
+  const [notifications, setNotifications] = React.useState(initialNotifications);
   const unreadCount = notifications.filter((n: any) => !n.is_read).length;
 
   const [isNotifOpen, setIsNotifOpen] = React.useState(false);
@@ -39,9 +41,16 @@ export default function Navbar({ user, onLogout }: NavbarProps) {
     }
     document.addEventListener("mousedown", handleClickOutside);
 
-    // Polling for new notifications every 30 seconds
+    // Polling for new notifications every 30 seconds using lightweight fetch
     const interval = setInterval(() => {
-      router.reload({ only: ['auth'], preserveState: true, preserveScroll: true });
+      fetch('/app-api/notifications')
+        .then(res => res.json())
+        .then(data => {
+            if(Array.isArray(data)) {
+                setNotifications(data);
+            }
+        })
+        .catch(err => console.error("Error fetching notifications", err));
     }, 30000);
 
     return () => {

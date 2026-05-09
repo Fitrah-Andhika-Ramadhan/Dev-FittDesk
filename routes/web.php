@@ -41,7 +41,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
     Route::get('/tickets/{ticket}', [TicketController::class, 'show'])->name('tickets.show');
 
-    // Notifications
+    // Notifications API
+    Route::get('/app-api/notifications', function () {
+        $notifications = \App\Models\Notification::where('user_id', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+        return response()->json($notifications);
+    })->name('api.notifications');
+
+    // Notifications View
     Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/read-all', function () {
         \App\Models\Notification::where('user_id', auth()->id())

@@ -111,6 +111,23 @@ Route::post('/app-api/chat/init', [\App\Http\Controllers\LiveChatController::cla
 Route::get('/app-api/chat/messages/{sessionId}', [\App\Http\Controllers\LiveChatController::class, 'getMessages']);
 Route::post('/app-api/chat/send', [\App\Http\Controllers\LiveChatController::class, 'sendMessage']);
 
+// Temporary route for Vercel production migration
+Route::get('/app-api/run-migrations', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Migrations ran successfully!',
+            'output' => \Illuminate\Support\Facades\Artisan::output()
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 500);
+    }
+});
+
 require __DIR__.'/auth.php';
 
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
+import { LiveChatWidget } from '@/Components/LiveChatWidget';
 import {
   Building2,
   TrendingUp,
@@ -569,6 +570,9 @@ export default function Landing() {
           </div>
         </div>
       </footer>
+
+      {/* Live Chat Widget */}
+      <LiveChatWidget />
     </div>
   );
 }

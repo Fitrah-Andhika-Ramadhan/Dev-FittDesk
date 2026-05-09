@@ -174,21 +174,21 @@ export default function Landing() {
     <div className="min-h-screen bg-slate-50 font-sans selection:bg-blue-600 selection:text-white">
       <Head title="Helpdesk & Support Center | FittDesk" />
       
-      {/* Navigation Bar - Glassmorphism */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-lg border-b border-white/20 shadow-sm">
+      {/* Navigation Bar - Dark Glassmorphism */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0A0F1C]/80 backdrop-blur-lg border-b border-white/10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
                 <Building2 className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 tracking-tight">FittDesk</span>
+            <span className="text-xl font-bold text-white tracking-tight">FittDesk</span>
           </div>
           <div className="flex items-center gap-3 sm:gap-4">
             <Link href={route('login')}>
-              <Button variant="ghost" className="hidden sm:flex hover:bg-blue-50 hover:text-blue-600 font-medium transition-colors">Login</Button>
+              <Button variant="ghost" className="hidden sm:flex text-gray-300 hover:bg-white/10 hover:text-white font-medium transition-colors">Login</Button>
             </Link>
             <Link href={route('register')}>
-              <Button className="bg-gray-900 hover:bg-gray-800 text-white rounded-full px-6 shadow-md transition-transform active:scale-95">Get Started</Button>
+              <Button className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-6 shadow-md shadow-blue-500/20 transition-transform active:scale-95">Get Started</Button>
             </Link>
           </div>
         </div>

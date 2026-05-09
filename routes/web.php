@@ -129,12 +129,12 @@ Route::post('/app-api/chat/send', [\App\Http\Controllers\LiveChatController::cla
 // Temporary route for Vercel production migration
 Route::get('/app-api/run-migrations', function () {
     try {
-        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
+        Artisan::call('migrate', ['--force' => true]);
+        
         return response()->json([
             'success' => true,
-            'message' => 'Migrations and seeders ran successfully!',
-            'output' => \Illuminate\Support\Facades\Artisan::output()
+            'message' => 'Migrations ran successfully!',
+            'output' => Artisan::output()
         ]);
     } catch (\Exception $e) {
         return response()->json([

@@ -127,6 +127,14 @@ export default function Landing() {
     }, 3000);
   };
 
+  const handlePrevSlide = () => {
+    setActiveSlide((current) => (current - 1 + heroSlides.length) % heroSlides.length);
+  };
+
+  const handleNextSlide = () => {
+    setActiveSlide((current) => (current + 1) % heroSlides.length);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">

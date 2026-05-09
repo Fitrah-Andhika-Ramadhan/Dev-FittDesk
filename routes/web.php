@@ -136,6 +136,21 @@ Route::get('/app-api/run-migrations', function () {
     }
 });
 
+Route::get('/app-api/test-notif', function () {
+    if (!auth()->check()) {
+        return response()->json(['error' => 'Harap login dulu'], 401);
+    }
+    
+    \App\Models\Notification::create([
+        'user_id' => auth()->id(),
+        'title' => '🎉 Uji Coba Notifikasi FittDesk',
+        'message' => 'Halo ' . auth()->user()->name . '! Ini adalah contoh notifikasi dummy. Anda bisa menandainya sebagai telah dibaca dengan mengkliknya.',
+        'type' => 'system_alert'
+    ]);
+    
+    return response()->json(['success' => true, 'message' => 'Notifikasi dummy berhasil dikirim! Silakan refresh halaman web.']);
+});
+
 require __DIR__.'/auth.php';
 
 

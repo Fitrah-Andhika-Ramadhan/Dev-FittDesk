@@ -115,9 +115,10 @@ Route::post('/app-api/chat/send', [\App\Http\Controllers\LiveChatController::cla
 Route::get('/app-api/run-migrations', function () {
     try {
         \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
         return response()->json([
             'success' => true,
-            'message' => 'Migrations ran successfully!',
+            'message' => 'Migrations and seeders ran successfully!',
             'output' => \Illuminate\Support\Facades\Artisan::output()
         ]);
     } catch (\Exception $e) {

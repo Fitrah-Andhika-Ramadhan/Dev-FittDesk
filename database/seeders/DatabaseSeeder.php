@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::firstOrCreate(
-            ['email' => 'admin@natagroup.com'],
+            ['email' => 'admin@fittdesk.com'],
             [
                 'name' => 'Super Admin',
                 'role' => 'SUPER_ADMIN',

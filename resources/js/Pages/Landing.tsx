@@ -463,10 +463,14 @@ export default function Landing() {
                 alt={selectedMedia.title}
                 className="w-full max-h-[80vh] object-contain"
               />
-            ) : selectedMedia.url.includes('youtube.com') || selectedMedia.url.includes('youtu.be') || selectedMedia.url.includes('vimeo.com') || selectedMedia.url.includes('player.vimeo') ? (
+            ) : selectedMedia.url.includes('youtube.com') || selectedMedia.url.includes('youtu.be') || selectedMedia.url.includes('vimeo.com') || selectedMedia.url.includes('player.vimeo') || selectedMedia.url.includes('drive.google.com') ? (
               <div className="aspect-video w-full">
                 <iframe
-                  src={selectedMedia.url + (selectedMedia.url.includes('?') ? '&' : '?') + 'autoplay=1'}
+                  src={
+                    selectedMedia.url.includes('drive.google.com')
+                      ? selectedMedia.url  // already converted to /preview by backend
+                      : selectedMedia.url + (selectedMedia.url.includes('?') ? '&' : '?') + 'autoplay=1'
+                  }
                   title={selectedMedia.title}
                   className="w-full h-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"

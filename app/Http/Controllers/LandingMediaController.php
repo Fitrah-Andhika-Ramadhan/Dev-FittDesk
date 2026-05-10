@@ -4,27 +4,50 @@ namespace App\Http\Controllers;
 
 use App\Models\LandingMedia;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class LandingMediaController extends Controller
 {
     /**
-     * Convert any YouTube or Vimeo watch URL into an embeddable URL.
+     * Convert share/watch URLs to embeddable/preview URLs.
+     * Supports: YouTube, Vimeo, Google Drive
      */
     private function toEmbedUrl(string $url): string
     {
-        // YouTube: https://www.youtube.com/watch?v=ID  OR  https://youtu.be/ID
-        if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/', $url, $m)) {
+        $url = trim($url);
+
+        // YouTube: watch?v=ID or youtu.be/ID
+        if (preg_match('/(?:youtube\.com\/watch\?(?:.*&)?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/', $url, $m)) {
             return 'https://www.youtube.com/embed/' . $m[1];
         }
 
-        // Vimeo: https://vimeo.com/ID
-        if (preg_match('/vimeo\.com\/(\d+)/', $url, $m)) {
+        // Vimeo: vimeo.com/ID
+        if (preg_match('/(?<!player\.)vimeo\.com\/(\d+)/', $url, $m)) {
             return 'https://player.vimeo.com/video/' . $m[1];
         }
 
-        // Already an embed URL or a direct file URL – return as-is
+        // Google Drive share link: /file/d/FILE_ID/view  →  /file/d/FILE_ID/preview
+        if (preg_match('/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/', $url, $m)) {
+            return 'https://drive.google.com/file/d/' . $m[1] . '/preview';
+        }
+
+        // Google Drive open?id=FILE_ID
+        if (preg_match('/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/', $url, $m)) {
+            return 'https://drive.google.com/file/d/' . $m[1] . '/preview';
+        }
+
+        // Already a supported embed / preview URL – return as-is
         return $url;
+    }
+
+    /**
+     * Generate a static thumbnail URL from a video link (best-effort).
+     */
+    private function autoThumbnail(string $url): string
+    {
+        if (preg_match('/(?:youtube\.com\/embed\/|youtube\.com\/watch\?(?:.*&)?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/', $url, $m)) {
+            return 'https://img.youtube.com/vi/' . $m[1] . '/maxresdefault.jpg';
+        }
+        return '';
     }
 
     public function index()
@@ -51,24 +74,15 @@ class LandingMediaController extends Controller
         $request->validate([
             'type'  => 'required|string|in:image,video',
             'title' => 'required|string|max:255',
+            'url'   => 'required|string',
         ]);
 
-        $url       = $request->url ?? '';
+        $url       = $this->toEmbedUrl($request->url);
         $thumbnail = $request->thumbnail ?? '';
 
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $path = $file->store('media', 'public');
-            // Use the full APP_URL so it's absolute and works everywhere
-            $url  = Storage::disk('public')->url($path);
-            if ($request->type === 'image') {
-                $thumbnail = $url;
-            }
-        } else {
-            // Auto-convert watch URL to embed URL for video
-            if ($request->type === 'video') {
-                $url = $this->toEmbedUrl($url);
-            }
+        // Auto-generate thumbnail for YouTube if not provided
+        if ($request->type === 'video' && empty($thumbnail)) {
+            $thumbnail = $this->autoThumbnail($url);
         }
 
         $media = LandingMedia::create([
@@ -90,6 +104,7 @@ class LandingMediaController extends Controller
             'id'    => 'required',
             'type'  => 'required|string|in:image,video',
             'title' => 'required|string|max:255',
+            'url'   => 'required|string',
         ]);
 
         $media = LandingMedia::find($request->id);
@@ -97,20 +112,12 @@ class LandingMediaController extends Controller
             return response()->json(['success' => false, 'error' => 'Not found'], 404);
         }
 
-        $url       = $request->url ?? $media->url;
-        $thumbnail = $request->thumbnail ?? $media->thumbnail;
+        $url       = $this->toEmbedUrl($request->url);
+        $thumbnail = $request->thumbnail ?? $media->thumbnail ?? '';
 
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $path = $file->store('media', 'public');
-            $url  = Storage::disk('public')->url($path);
-            if ($request->type === 'image') {
-                $thumbnail = $url;
-            }
-        } else {
-            if ($request->type === 'video') {
-                $url = $this->toEmbedUrl($url);
-            }
+        // Auto-generate thumbnail for YouTube if not provided
+        if ($request->type === 'video' && empty($thumbnail)) {
+            $thumbnail = $this->autoThumbnail($url);
         }
 
         $media->update([
@@ -129,11 +136,6 @@ class LandingMediaController extends Controller
     {
         $media = LandingMedia::find($request->id);
         if ($media) {
-            // Try to delete stored file if it's a local storage URL
-            if (str_contains($media->url, '/storage/')) {
-                $relativePath = str_replace('/storage/', '', parse_url($media->url, PHP_URL_PATH));
-                Storage::disk('public')->delete($relativePath);
-            }
             $media->delete();
         }
         return response()->json(['success' => true]);

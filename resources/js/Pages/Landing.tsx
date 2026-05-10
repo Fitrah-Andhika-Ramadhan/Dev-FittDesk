@@ -84,6 +84,90 @@ const heroSlides = [
   },
 ];
 
+// ── Inline-play card: shows thumbnail, click → autoplay iframe ──────────
+function MediaCard({ item, large }: { item: Media; large?: boolean }) {
+  const [playing, setPlaying] = useState(false);
+
+  const isEmbed = item.url.includes('youtube.com') || item.url.includes('youtu.be')
+    || item.url.includes('vimeo.com') || item.url.includes('player.vimeo')
+    || item.url.includes('drive.google.com');
+
+  const embedSrc = item.url.includes('drive.google.com')
+    ? item.url
+    : item.url + (item.url.includes('?') ? '&' : '?') + 'autoplay=1&mute=0';
+
+  return (
+    <div className={`group rounded-3xl overflow-hidden bg-slate-50 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 ${large ? 'md:col-span-2 lg:col-span-2' : ''}`}>
+      <div className="relative h-64 lg:h-72 overflow-hidden bg-gray-900 w-full">
+        {item.type === 'image' ? (
+          // ── Static image ──
+          <img
+            src={item.thumbnail || item.url}
+            alt={item.title}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+            onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/800x400?text=Image'; }}
+          />
+        ) : playing && isEmbed ? (
+          // ── Video: playing → show iframe ──
+          <iframe
+            src={embedSrc}
+            title={item.title}
+            className="w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+            allowFullScreen
+          />
+        ) : playing && !isEmbed ? (
+          // ── Direct video file: playing → show <video> ──
+          <video src={item.url} className="w-full h-full object-cover" autoPlay controls playsInline />
+        ) : (
+          // ── Video: idle → show thumbnail + play button ──
+          <>
+            {item.thumbnail ? (
+              <img
+                src={item.thumbnail}
+                alt={item.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/800x400?text=Video'; }}
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900" />
+            )}
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors duration-300" />
+            {/* Play button */}
+            <button
+              onClick={() => setPlaying(true)}
+              className="absolute inset-0 flex items-center justify-center"
+              aria-label={`Play ${item.title}`}
+            >
+              <span className="bg-white/90 group-hover:bg-white group-hover:scale-110 transition-all duration-300 rounded-full w-16 h-16 flex items-center justify-center shadow-2xl">
+                <PlayCircle className="w-10 h-10 text-red-600" />
+              </span>
+            </button>
+          </>
+        )}
+
+        {/* Bottom caption (only when not playing) */}
+        {!playing && (
+          <>
+            {item.featured && (
+              <div className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
+                Featured
+              </div>
+            )}
+            <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/80 to-transparent">
+              <h3 className="font-bold text-white text-lg">{item.title}</h3>
+              {item.description && (
+                <p className="text-gray-300 text-sm line-clamp-1 mt-0.5">{item.description}</p>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function Landing() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
@@ -91,14 +175,6 @@ export default function Landing() {
   const [media, setMedia] = useState<Media[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeSlide, setActiveSlide] = useState(0);
-  const [selectedMedia, setSelectedMedia] = useState<Media | null>(null);
-
-  // Close modal on Escape key
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setSelectedMedia(null); };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, []);
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -380,124 +456,11 @@ export default function Landing() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {media.map((item, i) => (
-                <div
-                  key={item.id}
-                  onClick={() => setSelectedMedia(item)}
-                  className={`group cursor-pointer rounded-3xl overflow-hidden bg-slate-50 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 ${i === 0 ? 'md:col-span-2 lg:col-span-2' : ''}`}
-                >
-                  <div className="relative h-64 lg:h-72 overflow-hidden bg-gray-200 w-full">
-                    {/* Thumbnail layer */}
-                    {item.type === 'image' ? (
-                      <img
-                        src={item.thumbnail || item.url}
-                        alt={item.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                        onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/800x400?text=Image'; }}
-                      />
-                    ) : item.thumbnail ? (
-                      <img
-                        src={item.thumbnail}
-                        alt={item.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                        onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/800x400?text=Video'; }}
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
-                        <PlayCircle className="w-16 h-16 text-white/30" />
-                      </div>
-                    )}
-
-                    {/* Overlay gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
-
-                    {/* Play icon overlay for videos */}
-                    {item.type === 'video' && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="bg-white/20 group-hover:bg-white/30 backdrop-blur-sm transition-all duration-300 rounded-full p-4 group-hover:scale-110">
-                          <PlayCircle className="w-12 h-12 text-white" />
-                        </div>
-                      </div>
-                    )}
-
-                    {item.featured && (
-                      <div className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg backdrop-blur-md">
-                        Featured
-                      </div>
-                    )}
-
-                    <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                      <h3 className="font-bold text-white text-xl mb-1">{item.title}</h3>
-                      <p className="text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100 line-clamp-2">{item.description}</p>
-                    </div>
-                  </div>
-                </div>
+                <MediaCard key={item.id} item={item} large={i === 0} />
               ))}
             </div>
           </div>
         </section>
-      )}
-
-      {/* Media Lightbox Modal */}
-      {selectedMedia && (
-        <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
-          style={{ backgroundColor: 'rgba(0,0,0,0.85)' }}
-          onClick={() => setSelectedMedia(null)}
-        >
-          <div
-            className="relative w-full max-w-4xl bg-black rounded-2xl overflow-hidden shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close button */}
-            <button
-              onClick={() => setSelectedMedia(null)}
-              className="absolute top-4 right-4 z-10 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white rounded-full w-10 h-10 flex items-center justify-center text-xl transition-colors"
-            >
-              ✕
-            </button>
-
-            {/* Media Content */}
-            {selectedMedia.type === 'image' ? (
-              <img
-                src={selectedMedia.url}
-                alt={selectedMedia.title}
-                className="w-full max-h-[80vh] object-contain"
-              />
-            ) : selectedMedia.url.includes('youtube.com') || selectedMedia.url.includes('youtu.be') || selectedMedia.url.includes('vimeo.com') || selectedMedia.url.includes('player.vimeo') || selectedMedia.url.includes('drive.google.com') ? (
-              <div className="aspect-video w-full">
-                <iframe
-                  src={
-                    selectedMedia.url.includes('drive.google.com')
-                      ? selectedMedia.url  // already converted to /preview by backend
-                      : selectedMedia.url + (selectedMedia.url.includes('?') ? '&' : '?') + 'autoplay=1'
-                  }
-                  title={selectedMedia.title}
-                  className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-                  allowFullScreen
-                />
-              </div>
-            ) : (
-              <div className="aspect-video w-full">
-                <video
-                  src={selectedMedia.url}
-                  className="w-full h-full"
-                  controls
-                  autoPlay
-                  playsInline
-                />
-              </div>
-            )}
-
-            {/* Caption */}
-            <div className="p-4 bg-gray-900">
-              <h3 className="text-white font-bold text-lg">{selectedMedia.title}</h3>
-              {selectedMedia.description && (
-                <p className="text-gray-400 text-sm mt-1">{selectedMedia.description}</p>
-              )}
-            </div>
-          </div>
-        </div>
       )}
 
       {/* Split About Section */}

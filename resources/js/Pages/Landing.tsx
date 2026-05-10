@@ -87,12 +87,13 @@ const heroSlides = [
 
 // ── Media card: image shows as img, video embeds directly as iframe ──────
 function MediaCard({ item, large }: { item: Media; large?: boolean }) {
-  const isEmbed =
+  const isYouTubeOrVimeo =
     item.url.includes('youtube.com') ||
     item.url.includes('youtu.be') ||
     item.url.includes('vimeo.com') ||
-    item.url.includes('player.vimeo') ||
-    item.url.includes('drive.google.com');
+    item.url.includes('player.vimeo');
+
+  const isDrive = item.url.includes('drive.google.com');
 
   return (
     <div
@@ -101,7 +102,7 @@ function MediaCard({ item, large }: { item: Media; large?: boolean }) {
       }`}
     >
       {/* Media area */}
-      <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
+      <div className="relative w-full bg-gray-900" style={{ aspectRatio: '16/9' }}>
         {item.type === 'image' ? (
           <img
             src={item.thumbnail || item.url}
@@ -112,8 +113,8 @@ function MediaCard({ item, large }: { item: Media; large?: boolean }) {
                 'https://placehold.co/800x450?text=Image';
             }}
           />
-        ) : isEmbed ? (
-          /* Embed YouTube / Google Drive / Vimeo directly — native player */
+        ) : isYouTubeOrVimeo ? (
+          /* Embed YouTube / Vimeo directly — native player */
           <iframe
             src={item.url}
             title={item.title}
@@ -122,6 +123,28 @@ function MediaCard({ item, large }: { item: Media; large?: boolean }) {
             allowFullScreen
             loading="lazy"
           />
+        ) : isDrive ? (
+          /* Google Drive: direct link instead of iframe to avoid permission blocks */
+          <a
+            href={item.url.replace('/preview', '/view')}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full h-full relative group/drive"
+          >
+            <img
+              src={item.thumbnail || 'https://placehold.co/800x450?text=Google+Drive+Video'}
+              alt={item.title}
+              className="w-full h-full object-cover opacity-70 group-hover/drive:opacity-50 transition-opacity"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = 'https://placehold.co/800x450?text=Google+Drive+Video';
+              }}
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="bg-white/90 group-hover/drive:bg-white group-hover/drive:scale-110 transition-all duration-300 rounded-full p-4 shadow-2xl">
+                <PlayCircle className="w-12 h-12 text-blue-600" />
+              </div>
+            </div>
+          </a>
         ) : (
           /* Direct video file */
           <video

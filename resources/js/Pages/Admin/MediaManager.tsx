@@ -285,6 +285,9 @@ export default function MediaManager() {
                   onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
                   accept={formData.type === 'image' ? 'image/*' : 'video/*'}
                 />
+                <p className="text-xs text-amber-600 mt-1">
+                  * Note: Local file uploads will not persist if deployed on Vercel/Serverless. For Vercel, please use external URLs (e.g., YouTube, Vimeo, or Imgur) instead of uploading files directly, unless you have configured an S3 bucket.
+                </p>
               </div>
 
               <div>

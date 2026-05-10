@@ -379,26 +379,42 @@ export default function Landing() {
                         src={item.thumbnail || item.url}
                         alt={item.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                        onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/800x400?text=Image'; }}
+                      />
+                    ) : item.thumbnail ? (
+                      // Video with thumbnail: show thumbnail + play button overlay (works for all video types)
+                      <div className="relative w-full h-full">
+                        <img
+                          src={item.thumbnail}
+                          alt={item.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                          onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/800x400?text=Video'; }}
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="bg-black/50 group-hover:bg-black/70 transition-colors rounded-full p-4">
+                            <PlayCircle className="w-12 h-12 text-white" />
+                          </div>
+                        </div>
+                      </div>
+                    ) : item.url.includes('youtube.com') || item.url.includes('youtu.be') || item.url.includes('vimeo.com') || item.url.includes('player.vimeo') ? (
+                      // Embed video (YouTube/Vimeo) without thumbnail
+                      <iframe
+                        src={item.url}
+                        title={item.title}
+                        className="w-full h-full pointer-events-none group-hover:scale-105 transition-transform duration-700"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       />
                     ) : (
-                      item.url.includes('youtube.com') || item.url.includes('youtu.be') || item.url.includes('vimeo.com') ? (
-                        <iframe
-                          src={item.url}
-                          title={item.title}
-                          className="w-full h-full pointer-events-none group-hover:scale-105 transition-transform duration-700"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        />
-                      ) : (
-                        <video
-                          src={item.url}
-                          title={item.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                          autoPlay
-                          loop
-                          muted
-                          playsInline
-                        />
-                      )
+                      // Direct video file (local/CDN)
+                      <video
+                        src={item.url}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        preload="metadata"
+                      />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
                     

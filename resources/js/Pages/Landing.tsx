@@ -20,7 +20,8 @@ import {
   ChevronLeft,
   Sparkles,
   PlayCircle,
-  Globe2
+  Globe2,
+  ExternalLink
 } from 'lucide-react';
 import axios from 'axios';
 
@@ -147,6 +148,17 @@ function MediaCard({ item, large }: { item: Media; large?: boolean }) {
         {item.description && (
           <p className="text-sm text-gray-500 line-clamp-2 mt-0.5">{item.description}</p>
         )}
+
+        {/* View File button */}
+        <a
+          href={item.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 px-4 py-2 rounded-xl transition-colors shadow-sm"
+        >
+          <ExternalLink className="w-3.5 h-3.5" />
+          View File
+        </a>
       </div>
     </div>
   );

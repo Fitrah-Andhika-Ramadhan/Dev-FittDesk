@@ -84,89 +84,75 @@ const heroSlides = [
   },
 ];
 
-// ── Inline-play card: shows thumbnail, click → autoplay iframe ──────────
+// ── Media card: image shows as img, video embeds directly as iframe ──────
 function MediaCard({ item, large }: { item: Media; large?: boolean }) {
-  const [playing, setPlaying] = useState(false);
-
-  const isEmbed = item.url.includes('youtube.com') || item.url.includes('youtu.be')
-    || item.url.includes('vimeo.com') || item.url.includes('player.vimeo')
-    || item.url.includes('drive.google.com');
-
-  const embedSrc = item.url.includes('drive.google.com')
-    ? item.url
-    : item.url + (item.url.includes('?') ? '&' : '?') + 'autoplay=1&mute=0';
+  const isEmbed =
+    item.url.includes('youtube.com') ||
+    item.url.includes('youtu.be') ||
+    item.url.includes('vimeo.com') ||
+    item.url.includes('player.vimeo') ||
+    item.url.includes('drive.google.com');
 
   return (
-    <div className={`group rounded-3xl overflow-hidden bg-slate-50 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 ${large ? 'md:col-span-2 lg:col-span-2' : ''}`}>
-      <div className="relative h-64 lg:h-72 overflow-hidden bg-gray-900 w-full">
+    <div
+      className={`group rounded-3xl overflow-hidden bg-slate-50 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 ${
+        large ? 'md:col-span-2 lg:col-span-2' : ''
+      }`}
+    >
+      {/* Media area */}
+      <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
         {item.type === 'image' ? (
-          // ── Static image ──
           <img
             src={item.thumbnail || item.url}
             alt={item.title}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-            onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/800x400?text=Image'; }}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src =
+                'https://placehold.co/800x450?text=Image';
+            }}
           />
-        ) : playing && isEmbed ? (
-          // ── Video: playing → show iframe ──
+        ) : isEmbed ? (
+          /* Embed YouTube / Google Drive / Vimeo directly — native player */
           <iframe
-            src={embedSrc}
+            src={item.url}
             title={item.title}
             className="w-full h-full"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
             allowFullScreen
+            loading="lazy"
           />
-        ) : playing && !isEmbed ? (
-          // ── Direct video file: playing → show <video> ──
-          <video src={item.url} className="w-full h-full object-cover" autoPlay controls playsInline />
         ) : (
-          // ── Video: idle → show thumbnail + play button ──
-          <>
-            {item.thumbnail ? (
-              <img
-                src={item.thumbnail}
-                alt={item.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/800x400?text=Video'; }}
-              />
-            ) : (
-              <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900" />
-            )}
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors duration-300" />
-            {/* Play button */}
-            <button
-              onClick={() => setPlaying(true)}
-              className="absolute inset-0 flex items-center justify-center"
-              aria-label={`Play ${item.title}`}
-            >
-              <span className="bg-white/90 group-hover:bg-white group-hover:scale-110 transition-all duration-300 rounded-full w-16 h-16 flex items-center justify-center shadow-2xl">
-                <PlayCircle className="w-10 h-10 text-red-600" />
-              </span>
-            </button>
-          </>
+          /* Direct video file */
+          <video
+            src={item.url}
+            className="w-full h-full object-cover"
+            controls
+            playsInline
+            preload="metadata"
+          />
         )}
+      </div>
 
-        {/* Bottom caption (only when not playing) */}
-        {!playing && (
-          <>
-            {item.featured && (
-              <div className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
-                Featured
-              </div>
-            )}
-            <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/80 to-transparent">
-              <h3 className="font-bold text-white text-lg">{item.title}</h3>
-              {item.description && (
-                <p className="text-gray-300 text-sm line-clamp-1 mt-0.5">{item.description}</p>
-              )}
-            </div>
-          </>
+      {/* Caption */}
+      <div className="p-4">
+        <div className="flex items-center gap-2 mb-1">
+          {item.featured && (
+            <span className="text-xs font-bold text-blue-600 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-full">
+              ⭐ Featured
+            </span>
+          )}
+          <span className="text-xs text-gray-400 uppercase font-medium">{item.type}</span>
+        </div>
+        <h3 className="font-semibold text-gray-900 text-base line-clamp-1">{item.title}</h3>
+        {item.description && (
+          <p className="text-sm text-gray-500 line-clamp-2 mt-0.5">{item.description}</p>
         )}
       </div>
     </div>
   );
 }
+
+
 
 export default function Landing() {
   const [email, setEmail] = useState('');

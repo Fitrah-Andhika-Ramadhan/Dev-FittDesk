@@ -18,8 +18,27 @@ class DatabaseSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'admin@fittdesk.com'],
             [
-                'name' => 'Super Admin',
-                'role' => 'SUPER_ADMIN',
+                'name'     => 'Super Admin',
+                'role'     => 'SUPER_ADMIN',
+                'password' => bcrypt('password'),
+            ]
+        );
+
+        // Demo accounts (dev only)
+        User::firstOrCreate(
+            ['email' => 'admin2@fittdesk.com'],
+            [
+                'name'     => 'Admin Demo',
+                'role'     => 'ADMIN',
+                'password' => bcrypt('password'),
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'user@fittdesk.com'],
+            [
+                'name'     => 'User Demo',
+                'role'     => 'USER',
                 'password' => bcrypt('password'),
             ]
         );

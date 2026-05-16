@@ -1,0 +1,20 @@
+runtime: php82
+env: standard
+
+env_variables:
+  APP_ENV: dev
+  APP_DEBUG: true
+  # Isi APP_KEY dengan key dari .env lokal Anda (php artisan key:generate)
+  APP_KEY: "base64:..." 
+  LOG_CHANNEL: stderr
+  # Tambahkan variabel database GCP (Cloud SQL) jika ada
+  # DB_CONNECTION: mysql
+  # DB_HOST: 127.0.0.1
+  # DB_PORT: 3306
+  # DB_DATABASE: fittdesk
+  # DB_USERNAME: root
+  # DB_PASSWORD: ""
+
+handlers:
+  - url: /.*
+    script: auto

@@ -10,12 +10,15 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
-    npm \
-    nodejs \
     libsqlite3-dev
 
+# Install Node.js 20 (Dibutuhkan Vite untuk build frontend)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
+
 # Install PHP extensions
-RUN docker-php-ext-install pdo_mysql pdo_sqlite mbstring exif pcntl bcmath gd zip intl dom
+# (mbstring dan dom biasanya sudah bawaan dari image php:8.2, kita pastikan yang lain terinstall)
+RUN docker-php-ext-install pdo_mysql pdo_sqlite pcntl bcmath gd zip intl
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
@@ -41,9 +44,17 @@ WORKDIR /var/www/html
 # Copy seluruh file project
 COPY . .
 
-# Install PHP & Node.js dependencies, lalu build assets
-RUN composer install --optimize-autoloader --no-dev
-RUN npm install
+# Buat dummy .env agar composer tidak error saat post-install-cmd
+RUN cp .env.example .env
+
+# Install PHP dependencies (tanpa dev package)
+RUN composer install --optimize-autoloader --no-dev --no-interaction
+
+# Generate APP_KEY untuk dummy .env
+RUN php artisan key:generate
+
+# Install Node dependencies dan build assets (Vite)
+RUN npm ci
 RUN npm run build
 
 # Setup permissions

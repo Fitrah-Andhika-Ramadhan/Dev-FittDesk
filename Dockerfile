@@ -1,25 +1,21 @@
 FROM php:8.2-apache
 
-# Install system dependencies
+# Install system dependencies dasar yang dibutuhkan untuk git/zip/curl
 RUN apt-get update && apt-get install -y \
-    libzip-dev \
     zip \
     unzip \
     git \
-    curl \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    libsqlite3-dev \
-    libicu-dev
+    curl
 
 # Install Node.js 20 (Dibutuhkan Vite untuk build frontend)
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs
 
-# Install PHP extensions
-# (mbstring dan dom biasanya sudah bawaan dari image php:8.2, kita pastikan yang lain terinstall)
-RUN docker-php-ext-install pdo_mysql pdo_sqlite pcntl bcmath gd zip intl
+# Download & jalankan docker-php-extension-installer untuk menginstal ekstensi PHP secara aman & cepat
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/install-php-extensions && \
+    install-php-extensions pdo_mysql pdo_sqlite pcntl bcmath gd zip intl
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite

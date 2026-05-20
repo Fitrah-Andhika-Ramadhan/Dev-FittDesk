@@ -50,9 +50,8 @@ RUN composer install --optimize-autoloader --no-dev --no-interaction
 # Generate APP_KEY untuk dummy .env
 RUN php artisan key:generate
 
-# Install Node dependencies dan build assets (Vite)
-RUN npm ci
-RUN npm run build
+# Install Node dependencies dan build assets (Vite), lalu hapus node_modules untuk memperkecil ukuran image
+RUN npm ci && npm run build && rm -rf node_modules && npm cache clean --force
 
 # Setup permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache

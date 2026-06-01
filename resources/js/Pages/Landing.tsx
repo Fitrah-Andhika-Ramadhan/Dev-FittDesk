@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import { LiveChatWidget } from '@/Components/LiveChatWidget';
+import { WhatsAppBubble } from '@/Components/WhatsAppBubble';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import {
   Building2,
@@ -817,6 +818,7 @@ export default function Landing() {
       </footer>
 
       <LiveChatWidget />
+      <WhatsAppBubble />
     </div>
   );
 }

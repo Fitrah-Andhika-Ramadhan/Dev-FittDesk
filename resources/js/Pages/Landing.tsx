@@ -513,16 +513,33 @@ export default function Landing() {
       {/* Bento Grid Features Section */}
       <section id="features" className="py-12 px-4 bg-slate-50 overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center max-w-3xl mx-auto mb-10"
-          >
-            <h2 className="text-blue-600 font-semibold tracking-wide uppercase text-sm mb-3">Enterprise Grade</h2>
-            <h3 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6 tracking-tight">Everything you need to support your team</h3>
-            <p className="text-lg text-gray-600 leading-relaxed">A perfectly integrated ecosystem of tools designed to help IT teams resolve issues faster and maintain clear documentation.</p>
-          </motion.div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-12">
+            <motion.div 
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="text-left"
+            >
+              <h2 className="text-blue-600 font-semibold tracking-wide uppercase text-sm mb-3">Enterprise Grade</h2>
+              <h3 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6 tracking-tight">Everything you need to support your team</h3>
+              <p className="text-lg text-gray-600 leading-relaxed">A perfectly integrated ecosystem of tools designed to help IT teams resolve issues faster and maintain clear documentation.</p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ type: "spring", duration: 1 }}
+              className="flex justify-center lg:justify-end relative"
+            >
+              <div className="absolute inset-0 bg-blue-500/5 blur-3xl rounded-full"></div>
+              <img 
+                src="/images/support_agent_3d.png" 
+                alt="IT Support Agent" 
+                className="relative z-10 w-full max-w-md drop-shadow-2xl hover:-translate-y-4 transition-transform duration-500" 
+              />
+            </motion.div>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[250px]">
             {/* Large Featured Box */}
@@ -593,20 +610,35 @@ export default function Landing() {
       {media.length > 0 && (
         <section id="media" className="py-12 px-4 bg-white overflow-hidden">
           <div className="max-w-7xl mx-auto">
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6"
-            >
-              <div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mb-12">
+              <motion.div 
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="text-left"
+              >
                 <h2 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">Platform Highlights</h2>
-                <p className="text-lg text-gray-600 max-w-2xl">Take a visual tour of FittDesk's powerful IT service capabilities.</p>
-              </div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button variant="outline" className="rounded-full border-gray-300 hover:bg-gray-50">View all modules</Button>
+                <p className="text-lg text-gray-600 max-w-xl mb-6">Take a visual tour of FittDesk's powerful IT service capabilities and collaborative features.</p>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-fit">
+                  <Button variant="outline" className="rounded-full border-gray-300 hover:bg-gray-50 shadow-sm">View all modules</Button>
+                </motion.div>
               </motion.div>
-            </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ type: "spring", duration: 1, delay: 0.2 }}
+                className="hidden md:flex justify-center lg:justify-end relative"
+              >
+                  <div className="absolute inset-0 bg-yellow-400/5 blur-3xl rounded-full"></div>
+                  <img 
+                    src="/images/team_collaboration_3d.png" 
+                    alt="Team Collaboration" 
+                    className="relative z-10 w-full max-w-[280px] drop-shadow-xl hover:rotate-3 hover:scale-105 transition-transform duration-500" 
+                  />
+              </motion.div>
+            </div>
 
             <motion.div 
               initial={{ opacity: 0 }}

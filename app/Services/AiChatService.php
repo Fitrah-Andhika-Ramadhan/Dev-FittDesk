@@ -58,7 +58,7 @@ class AiChatService
                 return $data['choices'][0]['message']['content'] ?? 'Maaf, saya sedang mengalami gangguan dalam memproses permintaan Anda.';
             } else {
                 Log::error('OpenRouter API Error: ' . $response->body());
-                return 'Maaf, sistem AI kami sedang tidak bisa diakses saat ini.';
+                return 'OpenRouter API Error: ' . $response->body();
             }
         } catch (\Exception $e) {
             Log::error('OpenRouter Exception: ' . $e->getMessage());

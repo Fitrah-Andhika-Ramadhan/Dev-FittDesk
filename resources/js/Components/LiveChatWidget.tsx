@@ -185,7 +185,9 @@ export function LiveChatWidget() {
                                     </div>
                                 )}
                                 <ReactMarkdown 
-                                    className={`text-[14px] leading-relaxed break-words [&>p]:mb-2 last:[&>p]:mb-0 [&>ul]:list-disc [&>ul]:ml-4 [&>ul]:mb-2 [&>ol]:list-decimal [&>ol]:ml-4 [&>ol]:mb-2 [&>h3]:font-bold [&>h3]:text-base [&>h3]:mb-1 [&>strong]:font-semibold`}
+                                    className={`prose prose-sm max-w-none prose-p:leading-relaxed prose-p:mb-2 prose-p:mt-0 prose-ul:my-1 prose-ol:my-1 break-words ${
+                                        msg.sender_type === 'guest' ? 'prose-invert prose-p:text-white prose-strong:text-white text-white' : 'prose-slate prose-p:text-gray-800 text-gray-800'
+                                    }`}
                                 >
                                     {msg.message}
                                 </ReactMarkdown>

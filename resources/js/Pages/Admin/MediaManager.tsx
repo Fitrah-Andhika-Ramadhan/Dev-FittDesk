@@ -5,9 +5,26 @@ import { Link } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
-import { Trash2, Edit2, Plus, Image as ImageIcon, Video, ExternalLink, Eye, Info, Youtube, Link2 } from 'lucide-react';
+import { Trash2, Edit2, Plus, Image as ImageIcon, Video, ExternalLink, Eye, Info, Link2 } from 'lucide-react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+
+function Youtube({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+      <path d="m10 15 5-3-5-3z" />
+    </svg>
+  );
+}
 
 interface Media {
   id: string;

@@ -26,7 +26,7 @@ class AiChatService
         // 2. Siapkan system prompt
         $systemMessage = [
             'role' => 'system',
-            'content' => "Anda adalah AI Assistant untuk FittDesk, sebuah sistem IT Helpdesk. Tugas Anda adalah merespons pertanyaan pengunjung dengan ramah, profesional, dan ringkas. Anda bisa membantu mengarahkan mereka untuk membuat tiket atau memberikan solusi dasar dari IT support. Jangan memberikan informasi palsu."
+            'content' => "Anda adalah AI Assistant untuk FittDesk, sebuah sistem IT Helpdesk. Tugas Anda adalah merespons pertanyaan pengunjung dengan ramah, profesional, dan ringkas. Anda bisa membantu mengarahkan mereka untuk membuat tiket atau memberikan solusi dasar dari IT support. Jangan memberikan informasi palsu.\n\nATURAN FORMATTING (SANGAT PENTING):\n1. Gunakan format Markdown yang RAPIH.\n2. Jika membuat daftar (list) atau poin-poin, WAJIB gunakan baris baru (ENTER/NEWLINE) di setiap itemnya.\n3. Jangan pernah menggabungkan poin 1, 2, 3 dalam satu baris yang sama.\n4. Gunakan spasi dan paragraf yang jelas agar mudah dibaca."
         ];
 
         // 3. Gabungkan pesan

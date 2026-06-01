@@ -511,13 +511,13 @@ export default function Landing() {
       </div>
 
       {/* Bento Grid Features Section */}
-      <section id="features" className="py-20 px-4 bg-slate-50 overflow-hidden">
+      <section id="features" className="py-12 px-4 bg-slate-50 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center max-w-3xl mx-auto mb-16"
+            className="text-center max-w-3xl mx-auto mb-10"
           >
             <h2 className="text-blue-600 font-semibold tracking-wide uppercase text-sm mb-3">Enterprise Grade</h2>
             <h3 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6 tracking-tight">Everything you need to support your team</h3>
@@ -591,13 +591,13 @@ export default function Landing() {
 
       {/* Dynamic Media Section */}
       {media.length > 0 && (
-        <section id="media" className="py-20 px-4 bg-white overflow-hidden">
+        <section id="media" className="py-12 px-4 bg-white overflow-hidden">
           <div className="max-w-7xl mx-auto">
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6"
+              className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6"
             >
               <div>
                 <h2 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">Platform Highlights</h2>
@@ -632,7 +632,7 @@ export default function Landing() {
       )}
 
       {/* Split About Section */}
-      <section className="py-24 px-4 bg-gray-900 text-white overflow-hidden relative">
+      <section className="py-16 px-4 bg-gray-900 text-white overflow-hidden relative">
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-600/10 rounded-full blur-[100px] pointer-events-none transform translate-x-1/3 -translate-y-1/3 animate-pulse"></div>
         
         <div className="max-w-7xl mx-auto relative z-10">
@@ -699,7 +699,7 @@ export default function Landing() {
       </section>
 
       {/* CTA / Contact Section */}
-      <section id="contact" className="py-24 px-4 bg-blue-600 relative overflow-hidden">
+      <section id="contact" className="py-16 px-4 bg-blue-600 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white/10 rounded-full blur-[80px] pointer-events-none transform translate-x-1/2 -translate-y-1/2"></div>
         
@@ -756,7 +756,7 @@ export default function Landing() {
       </section>
 
       {/* Minimal Footer */}
-      <footer className="bg-white py-12 px-4 border-t border-gray-100">
+      <footer className="bg-white py-6 px-4 border-t border-gray-100">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2">
             <Building2 className="w-6 h-6 text-blue-600" />

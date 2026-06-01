@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, Bot, UserRound } from 'lucide-react';
 import { Button } from './ui/button';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
     id: number;
@@ -25,6 +26,7 @@ export function LiveChatWidget() {
         }
     ]);
     const [inputValue, setInputValue] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Init chat session when opening for the first time
@@ -99,15 +101,19 @@ export function LiveChatWidget() {
         }]);
 
         try {
+            setIsLoading(true);
             await axios.post('/app-api/chat/send', {
                 session_id: sessionId,
                 message: tempMsg,
                 chat_mode: chatMode
             });
-            fetchMessages(sessionId);
+            await fetchMessages(sessionId);
         } catch (error) {
             console.error('Failed to send message', error);
             setInputValue(tempMsg); // restore on failure
+        } finally {
+            setIsLoading(false);
+            scrollToBottom();
         }
     };
 
@@ -178,7 +184,11 @@ export function LiveChatWidget() {
                                         <Bot className="w-3 h-3" /> AI Assistant
                                     </div>
                                 )}
-                                {msg.message}
+                                <ReactMarkdown 
+                                    className={`text-[14px] leading-relaxed break-words [&>p]:mb-2 last:[&>p]:mb-0 [&>ul]:list-disc [&>ul]:ml-4 [&>ul]:mb-2 [&>ol]:list-decimal [&>ol]:ml-4 [&>ol]:mb-2 [&>h3]:font-bold [&>h3]:text-base [&>h3]:mb-1 [&>strong]:font-semibold`}
+                                >
+                                    {msg.message}
+                                </ReactMarkdown>
                                 <div 
                                     className={`text-[10px] mt-1.5 text-right font-medium ${
                                         msg.sender_type === 'guest' ? 'text-blue-200' : 'text-gray-400'
@@ -189,6 +199,15 @@ export function LiveChatWidget() {
                             </div>
                         </div>
                     ))}
+                    {isLoading && (
+                        <div className="flex justify-start animate-in fade-in slide-in-from-bottom-2 duration-300">
+                            <div className="bg-white border border-gray-100 rounded-2xl p-4 flex gap-1.5 items-center shadow-sm">
+                                <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                                <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                                <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                            </div>
+                        </div>
+                    )}
                     <div ref={messagesEndRef} />
                 </div>
 

@@ -50,6 +50,7 @@ class AiChatService
                 // Menggunakan model default atau flash dari Google via OpenRouter
                 'model' => 'google/gemini-2.5-flash',
                 'messages' => $messages,
+                'max_tokens' => 1000,
             ]);
 
             if ($response->successful()) {

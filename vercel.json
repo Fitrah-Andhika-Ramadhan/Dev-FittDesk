@@ -39,5 +39,5 @@
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie"
     },
-    "name": "fitt-desk"
+    "name": "dev-fitt-desk"
 }

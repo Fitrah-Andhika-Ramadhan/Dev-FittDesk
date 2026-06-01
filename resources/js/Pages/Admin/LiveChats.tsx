@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 interface Message {
     id: number;
     sender_type: 'guest' | 'admin';
+    sender_id?: string | null;
     message: string;
     is_read: boolean;
     created_at: string;
@@ -230,6 +231,11 @@ export default function LiveChats({ auth, sessions: initialSessions }: any) {
                                                             : 'bg-white text-gray-800 border border-gray-200 rounded-2xl rounded-bl-sm'
                                                     }`}
                                                 >
+                                                    {msg.sender_type === 'admin' && msg.sender_id === null && (
+                                                        <div className="flex items-center gap-1 text-xs text-blue-200 mb-1 font-semibold">
+                                                            <Bot className="w-3 h-3" /> AI Assistant
+                                                        </div>
+                                                    )}
                                                     {msg.message}
                                                     <div 
                                                         className={`text-[10px] mt-1.5 flex items-center justify-end gap-1 ${

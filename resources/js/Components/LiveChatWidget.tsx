@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Bot } from 'lucide-react';
+import { MessageSquare, X, Send, Bot, UserRound } from 'lucide-react';
 import { Button } from './ui/button';
 import axios from 'axios';
 
@@ -7,17 +7,20 @@ interface Message {
     id: number;
     message: string;
     sender_type: 'guest' | 'admin';
+    sender_id?: string | null;
     created_at: string;
 }
 
 export function LiveChatWidget() {
     const [isOpen, setIsOpen] = useState(false);
+    const [chatMode, setChatMode] = useState<'ai' | 'admin'>('ai');
     const [sessionId, setSessionId] = useState<number | null>(null);
     const [messages, setMessages] = useState<Message[]>([
         {
             id: 0,
             message: 'Halo! Ada yang bisa kami bantu seputar layanan FittDesk?',
             sender_type: 'admin',
+            sender_id: null,
             created_at: new Date().toISOString()
         }
     ]);
@@ -61,6 +64,7 @@ export function LiveChatWidget() {
                         id: 0,
                         message: 'Halo! Ada yang bisa kami bantu seputar layanan FittDesk?',
                         sender_type: 'admin',
+                        sender_id: null,
                         created_at: new Date().toISOString()
                     },
                     ...res.data
@@ -97,7 +101,8 @@ export function LiveChatWidget() {
         try {
             await axios.post('/app-api/chat/send', {
                 session_id: sessionId,
-                message: tempMsg
+                message: tempMsg,
+                chat_mode: chatMode
             });
             fetchMessages(sessionId);
         } catch (error) {
@@ -111,25 +116,47 @@ export function LiveChatWidget() {
             {/* Chat Window */}
             <div className={`absolute bottom-20 right-0 w-80 md:w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col transition-all duration-300 origin-bottom-right ${isOpen ? 'scale-100 opacity-100 pointer-events-auto h-[450px]' : 'scale-90 opacity-0 pointer-events-none h-0'}`}>
                 {/* Header */}
-                <div className="bg-blue-600 p-4 flex justify-between items-center text-white">
-                    <div className="flex items-center gap-3">
-                        <div className="relative">
-                            <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center shadow-inner">
-                                <Bot className="w-6 h-6 text-blue-50" />
+                <div className="bg-blue-600 p-4 flex flex-col gap-3 text-white">
+                    <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                            <div className="relative">
+                                <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center shadow-inner">
+                                    {chatMode === 'ai' ? <Bot className="w-6 h-6 text-blue-50" /> : <UserRound className="w-6 h-6 text-blue-50" />}
+                                </div>
+                                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-blue-600"></div>
                             </div>
-                            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-blue-600"></div>
+                            <div>
+                                <h3 className="font-semibold text-sm">FittDesk Support</h3>
+                                <p className="text-xs text-blue-100">Online | {chatMode === 'ai' ? 'AI Assistant' : 'Admin Support'}</p>
+                            </div>
                         </div>
-                        <div>
-                            <h3 className="font-semibold text-sm">FittDesk Support</h3>
-                            <p className="text-xs text-blue-100">Online | Siap membantu</p>
-                        </div>
+                        <button 
+                            onClick={() => setIsOpen(false)}
+                            className="text-blue-100 hover:text-white transition-colors p-1 rounded-full hover:bg-blue-700"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
                     </div>
-                    <button 
-                        onClick={() => setIsOpen(false)}
-                        className="text-blue-100 hover:text-white transition-colors p-1 rounded-full hover:bg-blue-700"
-                    >
-                        <X className="w-5 h-5" />
-                    </button>
+
+                    {/* Chat Mode Toggle */}
+                    <div className="flex items-center justify-center bg-blue-700/50 p-1 rounded-lg">
+                        <button
+                            onClick={() => setChatMode('ai')}
+                            className={`flex-1 flex items-center justify-center gap-2 py-1.5 px-3 rounded-md text-xs font-semibold transition-all ${
+                                chatMode === 'ai' ? 'bg-white text-blue-700 shadow-sm' : 'text-blue-200 hover:text-white'
+                            }`}
+                        >
+                            <Bot className="w-3.5 h-3.5" /> AI Mode
+                        </button>
+                        <button
+                            onClick={() => setChatMode('admin')}
+                            className={`flex-1 flex items-center justify-center gap-2 py-1.5 px-3 rounded-md text-xs font-semibold transition-all ${
+                                chatMode === 'admin' ? 'bg-white text-blue-700 shadow-sm' : 'text-blue-200 hover:text-white'
+                            }`}
+                        >
+                            <UserRound className="w-3.5 h-3.5" /> Admin Mode
+                        </button>
+                    </div>
                 </div>
 
                 {/* Messages Area */}
@@ -146,6 +173,11 @@ export function LiveChatWidget() {
                                         : 'bg-white text-gray-800 border border-gray-100 rounded-2xl rounded-bl-sm'
                                 }`}
                             >
+                                {msg.sender_type === 'admin' && msg.sender_id === null && (
+                                    <div className="flex items-center gap-1 text-[11px] text-blue-500 mb-1 font-semibold">
+                                        <Bot className="w-3 h-3" /> AI Assistant
+                                    </div>
+                                )}
                                 {msg.message}
                                 <div 
                                     className={`text-[10px] mt-1.5 text-right font-medium ${

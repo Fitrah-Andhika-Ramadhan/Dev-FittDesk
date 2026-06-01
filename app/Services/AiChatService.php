@@ -62,7 +62,7 @@ class AiChatService
             }
         } catch (\Exception $e) {
             Log::error('OpenRouter Exception: ' . $e->getMessage());
-            return 'Terjadi kesalahan sistem saat menghubungi AI.';
+            return 'Terjadi kesalahan sistem saat menghubungi AI: ' . $e->getMessage();
         }
     }
 }

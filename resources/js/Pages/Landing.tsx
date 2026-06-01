@@ -22,7 +22,10 @@ import {
   Sparkles,
   PlayCircle,
   Globe2,
-  ExternalLink
+  ExternalLink,
+  Rocket,
+  Headset,
+  Bot
 } from 'lucide-react';
 import axios from 'axios';
 
@@ -125,15 +128,19 @@ const RunningText = () => {
     "HIGH SATISFACTION", "SEAMLESS INTEGRATION", "AI CHATBOT", "SECURE DATA"
   ];
   return (
-    <div className="w-full overflow-hidden bg-gradient-to-r from-blue-700 via-indigo-600 to-blue-700 border-y border-blue-500/30 py-3 flex relative z-20 shadow-lg shadow-blue-900/20">
+    <div className="w-full overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 border-y border-white/20 py-5 flex relative z-20 shadow-[0_10px_40px_-10px_rgba(79,70,229,0.5)]">
+      <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-blue-600 to-transparent z-10 pointer-events-none"></div>
+      <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-purple-600 to-transparent z-10 pointer-events-none"></div>
       <motion.div
         className="flex whitespace-nowrap gap-12 px-6"
         animate={{ x: ["0%", "-50%"] }}
-        transition={{ ease: "linear", duration: 30, repeat: Infinity }}
+        transition={{ ease: "linear", duration: 25, repeat: Infinity }}
       >
         {[...texts, ...texts, ...texts, ...texts].map((text, i) => (
-          <div key={i} className="flex items-center gap-4 text-blue-100 font-bold tracking-[0.2em] text-xs sm:text-sm">
-            <Sparkles className="w-4 h-4 text-yellow-300 animate-pulse" />
+          <div key={i} className="flex items-center gap-6 text-white font-extrabold tracking-[0.2em] text-sm sm:text-base drop-shadow-md">
+            <motion.div animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }}>
+              <Sparkles className="w-5 h-5 text-yellow-300 drop-shadow-[0_0_10px_rgba(253,224,71,0.8)]" />
+            </motion.div>
             {text}
           </div>
         ))}
@@ -553,8 +560,10 @@ export default function Landing() {
             >
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-transparent opacity-50"></div>
                 <div className="p-10 relative z-10 flex flex-col h-full">
-                    <motion.div whileHover={{ rotate: 15 }} className="w-fit">
-                      <ShieldCheck className="w-14 h-14 text-blue-600 mb-6 p-3 bg-blue-100 rounded-2xl" />
+                    <motion.div whileHover={{ scale: 1.1, rotate: 15 }} className="w-fit">
+                      <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg shadow-blue-500/40 mb-6 border border-white/20">
+                        <Rocket className="w-12 h-12 text-white drop-shadow-md" />
+                      </div>
                     </motion.div>
                     <h4 className="text-3xl font-bold text-gray-900 mb-4">Fast Response SLA</h4>
                     <p className="text-gray-600 text-lg leading-relaxed max-w-md">Guaranteed response times based on ticket priority and severity. Our automated routing ensures the right agent sees the right ticket instantly.</p>
@@ -575,8 +584,10 @@ export default function Landing() {
               className="relative rounded-3xl overflow-hidden bg-white shadow-lg border border-gray-100 group"
             >
                 <div className="p-8 h-full flex flex-col">
-                    <motion.div whileHover={{ rotate: -15 }} className="w-fit">
-                      <Hammer className="w-10 h-10 text-indigo-600 mb-4 p-2 bg-indigo-50 rounded-xl" />
+                    <motion.div whileHover={{ scale: 1.1, rotate: -15 }} className="w-fit">
+                      <div className="p-3 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl shadow-lg shadow-emerald-500/40 mb-4 border border-white/20">
+                        <Headset className="w-8 h-8 text-white drop-shadow-md" />
+                      </div>
                     </motion.div>
                     <h4 className="text-xl font-bold text-gray-900 mb-2">Expert Writers</h4>
                     <p className="text-gray-600 text-sm leading-relaxed">Clear, concise, and accurate documentation maintained by professionals.</p>
@@ -595,8 +606,10 @@ export default function Landing() {
                 <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-bl-full blur-xl group-hover:scale-150 transition-transform duration-700"></div>
                 <div className="p-8 h-full flex flex-col relative z-10">
-                    <motion.div whileHover={{ rotate: 180 }} transition={{ duration: 0.5 }} className="w-fit">
-                      <Zap className="w-10 h-10 text-yellow-400 mb-4 p-2 bg-yellow-400/10 rounded-xl" />
+                    <motion.div whileHover={{ scale: 1.1, rotate: 180 }} transition={{ duration: 0.5 }} className="w-fit">
+                      <div className="p-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl shadow-lg shadow-orange-500/40 mb-4 border border-white/20">
+                        <Bot className="w-8 h-8 text-white drop-shadow-md" />
+                      </div>
                     </motion.div>
                     <h4 className="text-xl font-bold mb-2">24/7 Availability</h4>
                     <p className="text-gray-300 text-sm leading-relaxed">Our knowledge base is always accessible, providing instant answers anytime.</p>

@@ -43,12 +43,12 @@ class AiChatService
         try {
             // 4. Request ke OpenRouter API
             $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . env('OPENROUTER_API_KEY'),
+                'Authorization' => 'Bearer ' . trim(env('OPENROUTER_API_KEY')),
                 'HTTP-Referer' => config('app.url'),
                 'X-Title' => 'FittDesk'
             ])->post('https://openrouter.ai/api/v1/chat/completions', [
-                // Menggunakan model default atau flash dari Google via OpenRouter
-                'model' => 'google/gemini-2.5-flash',
+                // Menggunakan model gratis 100% dari OpenRouter
+                'model' => 'google/gemini-2.0-flash-exp:free',
                 'messages' => $messages,
                 'max_tokens' => 1000,
             ]);
@@ -62,7 +62,7 @@ class AiChatService
             }
         } catch (\Exception $e) {
             Log::error('OpenRouter Exception: ' . $e->getMessage());
-            return 'Terjadi kesalahan sistem saat menghubungi AI: ' . $e->getMessage();
+            return 'Maaf, sistem AI kami sedang tidak bisa diakses saat ini.';
         }
     }
 }

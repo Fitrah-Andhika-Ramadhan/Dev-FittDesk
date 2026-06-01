@@ -48,7 +48,7 @@ class AiChatService
                 'X-Title' => 'FittDesk'
             ])->post('https://openrouter.ai/api/v1/chat/completions', [
                 // Menggunakan model gratis dari OpenRouter
-                'model' => 'google/gemma-4-26b-a4b-it:free',
+                'model' => 'openrouter/free',
                 'messages' => $messages,
                 'max_tokens' => 1000,
             ]);

@@ -47,8 +47,8 @@ class AiChatService
                 'HTTP-Referer' => config('app.url'),
                 'X-Title' => 'FittDesk'
             ])->post('https://openrouter.ai/api/v1/chat/completions', [
-                // Menggunakan model gratis 100% dari OpenRouter
-                'model' => 'google/gemini-2.0-flash-exp:free',
+                // Menggunakan model gratis dari OpenRouter
+                'model' => 'google/gemma-4-26b-a4b-it:free',
                 'messages' => $messages,
                 'max_tokens' => 1000,
             ]);
@@ -58,7 +58,7 @@ class AiChatService
                 return $data['choices'][0]['message']['content'] ?? 'Maaf, saya sedang mengalami gangguan dalam memproses permintaan Anda.';
             } else {
                 Log::error('OpenRouter API Error: ' . $response->body());
-                return 'OpenRouter API Error: ' . $response->body();
+                return 'Maaf, sistem AI kami sedang tidak bisa diakses saat ini.';
             }
         } catch (\Exception $e) {
             Log::error('OpenRouter Exception: ' . $e->getMessage());

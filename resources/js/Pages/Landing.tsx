@@ -476,11 +476,8 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Running Text Marquee */}
-      <RunningText />
-
       {/* Animated Stats Section */}
-      <section className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 sm:-mt-20 mb-20">
+      <section className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 sm:-mt-24 mb-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             {[
                 { icon: TrendingUp, value: `${landingContent.stats.projects}+`, label: 'Tickets Resolved', color: 'text-blue-600', bg: 'bg-blue-50' },
@@ -492,11 +489,11 @@ export default function Landing() {
                   key={i}
                   initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
+                  viewport={{ once: true, margin: "-50px" }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                 >
-                  <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-xl hover:-translate-y-2 transition-transform duration-300 rounded-2xl overflow-hidden group">
-                      <CardContent className="p-6 sm:p-8 text-center relative">
+                  <Card className="border-0 shadow-xl shadow-blue-900/5 bg-white/90 backdrop-blur-xl hover:-translate-y-2 transition-transform duration-300 rounded-2xl overflow-hidden group h-full flex flex-col justify-center">
+                      <CardContent className="p-6 sm:p-8 text-center relative flex-1">
                           <div className={`absolute top-0 right-0 w-24 h-24 rounded-bl-full opacity-50 transition-colors ${stat.bg} group-hover:scale-110 duration-500 -z-10`}></div>
                           <stat.icon className={`w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-4 ${stat.color} group-hover:scale-110 transition-transform`} />
                           <p className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">{stat.value}</p>
@@ -507,6 +504,11 @@ export default function Landing() {
             ))}
         </div>
       </section>
+
+      {/* Running Text Marquee */}
+      <div className="mb-20">
+        <RunningText />
+      </div>
 
       {/* Bento Grid Features Section */}
       <section id="features" className="py-20 px-4 bg-slate-50 overflow-hidden">

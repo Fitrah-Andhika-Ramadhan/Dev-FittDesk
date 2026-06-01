@@ -7,6 +7,7 @@ interface Message {
     id: number;
     message: string;
     sender_type: 'guest' | 'admin';
+    sender_id?: string | null;
     created_at: string;
 }
 
@@ -18,6 +19,7 @@ export function LiveChatWidget() {
             id: 0,
             message: 'Halo! Ada yang bisa kami bantu seputar layanan FittDesk?',
             sender_type: 'admin',
+            sender_id: null,
             created_at: new Date().toISOString()
         }
     ]);
@@ -61,6 +63,7 @@ export function LiveChatWidget() {
                         id: 0,
                         message: 'Halo! Ada yang bisa kami bantu seputar layanan FittDesk?',
                         sender_type: 'admin',
+                        sender_id: null,
                         created_at: new Date().toISOString()
                     },
                     ...res.data
@@ -146,6 +149,11 @@ export function LiveChatWidget() {
                                         : 'bg-white text-gray-800 border border-gray-100 rounded-2xl rounded-bl-sm'
                                 }`}
                             >
+                                {msg.sender_type === 'admin' && msg.sender_id === null && (
+                                    <div className="flex items-center gap-1 text-[11px] text-blue-500 mb-1 font-semibold">
+                                        <Bot className="w-3 h-3" /> AI Assistant
+                                    </div>
+                                )}
                                 {msg.message}
                                 <div 
                                     className={`text-[10px] mt-1.5 text-right font-medium ${

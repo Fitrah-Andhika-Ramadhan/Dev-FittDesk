@@ -83,7 +83,7 @@ export function LiveChatWidget() {
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages, isOpen]);
+    }, [messages.length, isOpen]);
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();

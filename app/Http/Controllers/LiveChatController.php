@@ -42,7 +42,8 @@ class LiveChatController extends Controller
     {
         $request->validate([
             'session_id' => 'required|exists:chat_sessions,id',
-            'message' => 'required|string'
+            'message' => 'required|string',
+            'chat_mode' => 'nullable|string|in:ai,admin'
         ]);
 
         $message = ChatMessage::create([
@@ -52,22 +53,30 @@ class LiveChatController extends Controller
             'is_read' => false
         ]);
 
-        // --- Panggil AI Chatbot ---
-        $aiService = new AiChatService();
-        $aiResponseText = $aiService->generateResponse($request->session_id, $request->message);
+        $chatMode = $request->input('chat_mode', 'ai');
 
-        // Simpan balasan AI
-        $aiMessage = ChatMessage::create([
-            'chat_session_id' => $request->session_id,
-            'sender_type' => 'admin',
-            'sender_id' => null, // AI Assistant
-            'message' => $aiResponseText,
-            'is_read' => false
-        ]);
+        if ($chatMode === 'ai') {
+            // --- Panggil AI Chatbot ---
+            $aiService = new AiChatService();
+            $aiResponseText = $aiService->generateResponse($request->session_id, $request->message);
+
+            // Simpan balasan AI
+            $aiMessage = ChatMessage::create([
+                'chat_session_id' => $request->session_id,
+                'sender_type' => 'admin',
+                'sender_id' => null, // AI Assistant
+                'message' => $aiResponseText,
+                'is_read' => false
+            ]);
+
+            return response()->json([
+                'guest_message' => $message,
+                'ai_message' => $aiMessage
+            ]);
+        }
 
         return response()->json([
-            'guest_message' => $message,
-            'ai_message' => $aiMessage
+            'guest_message' => $message
         ]);
     }
 }

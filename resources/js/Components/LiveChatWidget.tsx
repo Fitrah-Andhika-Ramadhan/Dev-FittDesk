@@ -43,13 +43,13 @@ export function LiveChatWidget() {
         }
     }, [isOpen]);
 
-    // Poll messages every 3 seconds if session is active
+    // Poll messages every 1 minute if session is active
     useEffect(() => {
         let interval: NodeJS.Timeout;
         if (isOpen && sessionId) {
             interval = setInterval(() => {
                 fetchMessages(sessionId);
-            }, 3000);
+            }, 60000);
         }
         return () => {
             if (interval) clearInterval(interval);
